@@ -1,3 +1,15 @@
+" run this to remove existing .vimrc
+" :!rm ~/.vimrc
+" then run this to make a soft link to this file
+" :!ln -s ~/vim/.vimrc ~/.vimrc
+" run this to install vundle
+" :!git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+" and then run this to download all the plugins in this file
+" :PluginInstall
+"
+
+
+
 set nocompatible              " be iMproved, required
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -41,7 +53,7 @@ Plugin 'lilydjwg/colorizer'
 Plugin 'sheerun/vim-polyglot'
 Plugin '2072/PHP-Indenting-for-VIm'
 Plugin 'Shougo/vimfiler.vim'
-Plugin 'neilagabriel/vim-geeknote'
+"Plugin 'neilagabriel/vim-geeknote'
 Plugin 'neilagabriel/powerline'
 Plugin 'Shougo/unite.vim'
 Plugin 'vim-scripts/SQLUtilities'
