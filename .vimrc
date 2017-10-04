@@ -9,7 +9,7 @@
 "
 
 
-
+set encoding=utf-8
 set nocompatible              " be iMproved, required
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -88,6 +88,10 @@ let g:nerdtree_tabs_open_on_console_startup=1
 au VimEnter *  NERDTree
 let NERDTreeShowBookmarks=1
 let g:NERDTreeWinSize=25
+let g:NERDTreeDirArrows=0
+
+
+
 "shougo/neocomplete settings
 let g:neocomplete#enable_at_startup = 1
 "" no one is really happy until you have this shortcuts
