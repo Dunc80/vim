@@ -4,7 +4,7 @@
 " :!ln -s ~/vim/.vimrc ~/.vimrc
 " run this to install vundle
 " :!git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-" and then run this to download all the plugins in this file
+" restart vim and then run this to download all the plugins in this file
 " :PluginInstall
 "
 
