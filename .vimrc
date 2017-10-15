@@ -7,7 +7,9 @@
 " restart vim and then run this to download all the plugins in this file
 " :PluginInstall
 "
-
+"using the .vimrc file in your home file will require -E
+"when using sudo on some systems, or vim will give the default/root user settings
+"eg sudo -E vim filename
 
 set encoding=utf-8
 set nocompatible              " be iMproved, required
@@ -169,7 +171,7 @@ augroup END
 " Uncomment to open tagbar automatically whenever possible
 autocmd BufEnter * nested :call tagbar#autoopen(0)
 " ----- Raimondi/delimitMate settings -----
-let delimitMate_expand_cr = 1
+"let delimitMate_expand_cr = 1
 augroup mydelimitMate
 	au!
 	au FileType markdown let b:delimitMate_nesting_quotes = ["`"]
