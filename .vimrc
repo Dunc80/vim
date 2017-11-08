@@ -10,6 +10,9 @@
 "using the .vimrc file in your home file will require -E
 "when using sudo on some systems, or vim will give the default/root user settings
 "eg sudo -E vim filename
+"
+"
+"manually create the folder for swp files (~/.vimrc/swap)
 
 set encoding=utf-8
 set nocompatible              " be iMproved, required
@@ -217,4 +220,9 @@ noremap <F9> 3G V y :@"<cr>
 
 set ignorecase
 set smartcase
+
+
+set backupdir=~/.vim/backup//
+set dir=~/.vim/swap//
+set undodir=~/.vim/undo//
 
