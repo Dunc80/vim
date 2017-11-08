@@ -13,6 +13,8 @@
 "
 "
 "manually create the folder for swp files (~/.vimrc/swap)
+"manually create the folder for undo files (~/.vimrc/undo)
+"manually create the folder for backup files (~/.vimrc/backup)
 
 set encoding=utf-8
 set nocompatible              " be iMproved, required
