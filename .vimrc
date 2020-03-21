@@ -60,7 +60,6 @@ Plugin 'lilydjwg/colorizer'
 Plugin 'sheerun/vim-polyglot'
 Plugin '2072/PHP-Indenting-for-VIm'
 Plugin 'Shougo/vimfiler.vim'
-"Plugin 'neilagabriel/vim-geeknote'
 Plugin 'neilagabriel/powerline'
 Plugin 'Shougo/unite.vim'
 Plugin 'vim-scripts/SQLUtilities'
@@ -214,12 +213,6 @@ nnoremap <C-n> :call NumberToggle()<cr>
 noremap :h tab help
 imap ` <esc>
 noremap ` <esc>
-noremap <F8> :tabnew<cr>:Geeknote<cr>
-noremap :nn :GeeknoteCreateNote
-"this will make F9 run any command that is saved on line 3 of the current
-"buffer
-"I use it to add a syntax highlighting command to evernote files
-noremap <F9> 3G V y :@"<cr> 
 
 set ignorecase
 set smartcase
