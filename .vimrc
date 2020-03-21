@@ -64,6 +64,7 @@ Plugin 'Shougo/vimfiler.vim'
 Plugin 'neilagabriel/powerline'
 Plugin 'Shougo/unite.vim'
 Plugin 'vim-scripts/SQLUtilities'
+Plugin 'jamessan/vim-gnupg'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -86,7 +87,7 @@ set t_Co=256
 let g:solarized_termcolors=256
 "Set the colorscheme
 colorscheme solarized
-set background=light
+set background=dark
 " ----- jistr/vim-nerdtree-tabs -----
 "Open/close NERDTree Tabs with \t
 nmap <silent> <leader>t :NERDTreeTabsToggle<CR>
