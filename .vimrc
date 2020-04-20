@@ -48,22 +48,26 @@ Plugin 'vim-airline/vim-airline-themes'
 Plugin 'scrooloose/syntastic'
 Plugin 'xolox/vim-misc'
 Plugin 'xolox/vim-easytags'
-Plugin 'majutsushi/tagbar'
+"Plugin 'majutsushi/tagbar'
+
+"automatic closing of quotes, parentheses etc
 Plugin 'Raimondi/delimitMate'
 Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'HTML-AutoCloseTag'
 Plugin 'fholgado/minibufexpl.vim'
 "Plugin 'Shougo/neocomplete.vim'
-Plugin 'altercation/vim-colors-solarized'
+"Plugin 'altercation/vim-colors-solarized'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'lilydjwg/colorizer'
 Plugin 'sheerun/vim-polyglot'
 Plugin '2072/PHP-Indenting-for-VIm'
-Plugin 'Shougo/vimfiler.vim'
-Plugin 'neilagabriel/powerline'
-Plugin 'Shougo/unite.vim'
+"Plugin 'Shougo/vimfiler.vim'
+"Plugin 'neilagabriel/powerline'
+"Plugin 'Shougo/unite.vim'
 Plugin 'vim-scripts/SQLUtilities'
 Plugin 'jamessan/vim-gnupg'
+Plugin 'mkitt/tabline.vim'
+"Plugin 'webdevel/tabulous'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -83,42 +87,31 @@ filetype plugin indent on    " required
 "set smartindent
 runtime macros/matchit.vim
 set t_Co=256
-let g:solarized_termcolors=256
+"let g:solarized_termcolors=256
 "Set the colorscheme
-colorscheme solarized
-set background=dark
-" ----- jistr/vim-nerdtree-tabs -----
-"Open/close NERDTree Tabs with \t
-nmap <silent> <leader>t :NERDTreeTabsToggle<CR>
-" To have NERDTree always open on startup
-let g:nerdtree_tabs_open_on_console_startup=1
-au VimEnter *  NERDTree
-let NERDTreeShowBookmarks=1
-let g:NERDTreeWinSize=25
-let g:NERDTreeDirArrows=0
+colorscheme koehler
+"set background=dark
 
-
-
-"shougo/neocomplete settings
-let g:neocomplete#enable_at_startup = 1
 "" no one is really happy until you have this shortcuts
-cnoreabbrev W! w!
-cnoreabbrev Q! q!
-cnoreabbrev Qall! qall!
-cnoreabbrev Wq wq
-cnoreabbrev Wa wa
-cnoreabbrev wQ wq
-cnoreabbrev WQ wq
-cnoreabbrev W w
-cnoreabbrev Q q
-cnoreabbrev Qall qall
+"cnoreabbrev W! w!
+"cnoreabbrev Q! q!
+"cnoreabbrev Qall! qall!
+"cnoreabbrev Wq wq
+"cnoreabbrev Wa wa
+"cnoreabbrev wQ wq
+"cnoreabbrev WQ wq
+"cnoreabbrev W w
+"cnoreabbrev Q q
+"cnoreabbrev Qall qall
+"
+"
 " ----- vim-airline settings -----
 " Always show statusbar
 set laststatus=2
 " Show PASTE if in paste mode
 let g:airline_detect_paste=1
 " Show airline for tabs too
-let g:airline#extensions#tabline#enabled = 1
+"let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1
 if !exists('g:airline_symbols')
 	let g:airline_symbols = {}
@@ -174,7 +167,7 @@ augroup END
 "Open/close tagbar with \b
 "nmap <silent> <leader>b :TagbarToggle<CR>
 " Uncomment to open tagbar automatically whenever possible
-autocmd BufEnter * nested :call tagbar#autoopen(0)
+"autocmd BufEnter * nested :call tagbar#autoopen(0)
 " ----- Raimondi/delimitMate settings -----
 "let delimitMate_expand_cr = 1
 augroup mydelimitMate
@@ -207,10 +200,24 @@ fun! NumberToggle()
 endfunc
 nnoremap <C-n> :call NumberToggle()<cr>
 
+" To have NERDTree always open on startup
+let g:nerdtree_tabs_open_on_console_startup=1
+au VimEnter *  NERDTree
+let NERDTreeShowBookmarks=1
+let g:NERDTreeWinSize=25
+let g:NERDTreeDirArrows=0
+
+hi TabLine      ctermfg=Black  ctermbg=Green     cterm=NONE
+hi TabLineFill  ctermfg=Black  ctermbg=Green     cterm=NONE
+hi TabLineSel   ctermfg=White  ctermbg=DarkBlue  cterm=NONE
+let g:tablineclosebutton=1
+
+
+
 "ctrl p searches dot files
 "let g:ctrlp_show_hidden = 1
 
-noremap :h tab help
+"noremap :h tab help
 imap ` <esc>
 noremap ` <esc>
 
@@ -222,3 +229,19 @@ set backupdir=~/.vim/backup//
 set dir=~/.vim/swap//
 set undodir=~/.vim/undo//
 
+
+
+
+cnoreabbrev cheat tab drop ~/vim/cheatsheet.txt <cr> :help<cr>
+"nnoremap <silent> <expr> <Leader><Leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":e ~/vim/cheatsheet.txt"
+"cnoremap <silent> <expr> cheat (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":e ~/vim/cheatsheet.txt"
+""cnoreabbrev <silent> <expr> cheat (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":e ~/vim/cheatsheet.txt"
+
+fun! CheatSheet()
+
+:tab drop ~/vim/cheatsheet.txt
+help
+endfun
+
+command Cheat :call CheatSheet()<cr>
+"command Cheat <silent> <expr> cheat (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":e ~/vim/cheatsheet.txt"

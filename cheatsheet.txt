@@ -1,2 +1,16 @@
+
+
+
+
+!git init
+make a new git repo
+
+!composer init
+initialise composer on a new project
+
 git checkout -b feature_x
 create a new branch
+
+
+:e /path/to/file
+open file
