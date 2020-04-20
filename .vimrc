@@ -28,7 +28,7 @@ Plugin 'VundleVim/Vundle.vim'
 " The following are examples of different formats supported.
 " Keep Plugin commands between vundle#begin/end.
 " plugin on GitHub repo
-Plugin 'tpope/vim-fugitive'
+"Plugin 'tpope/vim-fugitive'
 " plugin from http://vim-scripts.org/vim/scripts.html
 "Plugin 'L9'
 " Git plugin not hosted on GitHub
@@ -42,32 +42,31 @@ Plugin 'tpope/vim-fugitive'
 " different version somewhere else.
 "Plugin 'ascenator/L9', {'name': 'newL9'}
 "Plugin 'jistr/vim-nerdtree-tabs'
+
+
+
+
+Plugin 'tpope/vim-fugitive'
 Plugin 'scrooloose/nerdtree'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'scrooloose/syntastic'
 Plugin 'xolox/vim-misc'
 Plugin 'xolox/vim-easytags'
-"Plugin 'majutsushi/tagbar'
-
+Plugin 'majutsushi/tagbar'
 "automatic closing of quotes, parentheses etc
 Plugin 'Raimondi/delimitMate'
 Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'HTML-AutoCloseTag'
 Plugin 'fholgado/minibufexpl.vim'
-"Plugin 'Shougo/neocomplete.vim'
-"Plugin 'altercation/vim-colors-solarized'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'lilydjwg/colorizer'
 Plugin 'sheerun/vim-polyglot'
 Plugin '2072/PHP-Indenting-for-VIm'
-"Plugin 'Shougo/vimfiler.vim'
-"Plugin 'neilagabriel/powerline'
-"Plugin 'Shougo/unite.vim'
 Plugin 'vim-scripts/SQLUtilities'
 Plugin 'jamessan/vim-gnupg'
 Plugin 'mkitt/tabline.vim'
-"Plugin 'webdevel/tabulous'
+Plugin 'webdevel/tabulous'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -112,6 +111,7 @@ set laststatus=2
 let g:airline_detect_paste=1
 " Show airline for tabs too
 "let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#branch#enabled = 1
 let g:airline_powerline_fonts = 1
 if !exists('g:airline_symbols')
 	let g:airline_symbols = {}
@@ -165,9 +165,9 @@ augroup END
 "let g:miniBufExplUseSingleClick = 1
 "----- majutsushi/tagbar settings -----
 "Open/close tagbar with \b
-"nmap <silent> <leader>b :TagbarToggle<CR>
+nmap <silent> <leader>b :TagbarToggle<CR>
 " Uncomment to open tagbar automatically whenever possible
-"autocmd BufEnter * nested :call tagbar#autoopen(0)
+autocmd BufEnter * nested :call tagbar#autoopen(0)
 " ----- Raimondi/delimitMate settings -----
 "let delimitMate_expand_cr = 1
 augroup mydelimitMate
@@ -232,16 +232,4 @@ set undodir=~/.vim/undo//
 
 
 
-cnoreabbrev cheat tab drop ~/vim/cheatsheet.txt <cr> :help<cr>
-"nnoremap <silent> <expr> <Leader><Leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":e ~/vim/cheatsheet.txt"
-"cnoremap <silent> <expr> cheat (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":e ~/vim/cheatsheet.txt"
-""cnoreabbrev <silent> <expr> cheat (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":e ~/vim/cheatsheet.txt"
-
-fun! CheatSheet()
-
-:tab drop ~/vim/cheatsheet.txt
-help
-endfun
-
-command Cheat :call CheatSheet()<cr>
-"command Cheat <silent> <expr> cheat (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":e ~/vim/cheatsheet.txt"
+cnoreabbrev cs tab drop ~/vim/cheatsheet.vim <cr> :help<cr>
