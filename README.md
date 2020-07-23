@@ -1,3 +1,5 @@
 # vim
-This is my vim configuration in the form of the single .vimrc file.
-Clone the repository into your home directory and follow the instructions at the top of the file.
+This is my vim configuration
+Clone the repository into your home directory
+then run this
+chmod a+x ~/vim/setup.sh && ~/vim/setup.sh

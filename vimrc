@@ -1,21 +1,29 @@
 " run this to remove existing .vimrc
 " :!rm ~/.vimrc
 " then run this to make a soft link to this file
-" :!ln -s ~/vim/.vimrc ~/.vimrc
+" :!ln -s ~/vim/vimrc ~/.vimrc
 " run this to install vundle
 " :!git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 " restart vim and then run this to download all the plugins in this file
 " :PluginInstall
 "
-"using the .vimrc file in your home file will require -E
+" or just type
+" vim +PluginInstall
+" from the terminal
+"
+"using the .vimrc file in your home folder will require -E
 "when using sudo on some systems, or vim will give the default/root user settings
 "eg sudo -E vim filename
 "
 "
-"manually create the folder for swp files (~/.vimrc/swap/)
-"manually create the folder for undo files (~/.vimrc/undo/)
-"manually create the folder for backup files (~/.vimrc/backup/)
-
+"manually create the folder for swp files (~/.vim/swap/)
+"manually create the folder for undo files (~/.vim/undo/)
+"manually create the folder for backup files (~/.vim/backup/)
+"
+"to reload this file after editing it use :source %
+"or for short :so%
+"
+"
 set encoding=utf-8
 set nocompatible              " be iMproved, required
 " set the runtime path to include Vundle and initialize
@@ -42,11 +50,8 @@ Plugin 'VundleVim/Vundle.vim'
 " different version somewhere else.
 "Plugin 'ascenator/L9', {'name': 'newL9'}
 "Plugin 'jistr/vim-nerdtree-tabs'
-
-
-
-
 Plugin 'tpope/vim-fugitive'
+Plugin 'sodapopcan/vim-twiggy'
 Plugin 'scrooloose/nerdtree'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
@@ -63,11 +68,12 @@ Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'lilydjwg/colorizer'
 Plugin 'sheerun/vim-polyglot'
 Plugin '2072/PHP-Indenting-for-VIm'
+"Plugin 'stanangeloff/php.vim'
 Plugin 'vim-scripts/SQLUtilities'
 Plugin 'jamessan/vim-gnupg'
 Plugin 'mkitt/tabline.vim'
 Plugin 'webdevel/tabulous'
-
+Plugin 'wakatime/vim-wakatime'
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -83,14 +89,13 @@ filetype plugin indent on    " required
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
 "
-"set smartindent
+set smartindent
 runtime macros/matchit.vim
 set t_Co=256
 "let g:solarized_termcolors=256
 "Set the colorscheme
 colorscheme koehler
 "set background=dark
-
 "" no one is really happy until you have this shortcuts
 "cnoreabbrev W! w!
 "cnoreabbrev Q! q!
@@ -185,6 +190,12 @@ set incsearch
 set hlsearch
 syntax on
 set mouse=a
+set tabstop=2
+set shiftwidth=2
+set autoindent
+"set smartindent
+"let php_sql_query = 1
+"let php_htmlInStrings = 1
 syntax enable
 fun! DelBlank()
 	%s/\s\+$//e
@@ -192,44 +203,48 @@ fun! DelBlank()
 	normal gg=G
 endfun
 map <special> <leader>= :keepjumps call DelBlank()<cr>
+"switch on line numbering
 set nu
+"switch on relative line numbering
+"this leaves absolute line numbering on for the current line
 set rnu
+"function to toggle the relative line numbering
 fun! NumberToggle()
 	set rnu!
-	"set nu!
 endfunc
 nnoremap <C-n> :call NumberToggle()<cr>
-
+"toggle search highlighting
+noremap <leader>h :set hlsearch!<cr>
 " To have NERDTree always open on startup
 let g:nerdtree_tabs_open_on_console_startup=1
 au VimEnter *  NERDTree
 let NERDTreeShowBookmarks=1
 let g:NERDTreeWinSize=25
 let g:NERDTreeDirArrows=0
-
 hi TabLine      ctermfg=Black  ctermbg=Green     cterm=NONE
 hi TabLineFill  ctermfg=Black  ctermbg=Green     cterm=NONE
 hi TabLineSel   ctermfg=White  ctermbg=DarkBlue  cterm=NONE
 let g:tablineclosebutton=1
-
-
-
 "ctrl p searches dot files
 "let g:ctrlp_show_hidden = 1
-
 "noremap :h tab help
 imap ` <esc>
 noremap ` <esc>
-
 set ignorecase
 set smartcase
-
-
 set backupdir=~/.vim/backup//
 set dir=~/.vim/swap//
 set undodir=~/.vim/undo//
-
-
-
-
-cnoreabbrev cs tab drop ~/vim/cheatsheet.vim <cr> :help<cr>
+cnoreabbrev cs tab drop ~/vim/cheatsheet.txt <cr> :help<cr>
+fun! Diff(x, y)
+	execute 'tab sb' a:x
+	execute 'diffthis'
+	execute 'vert sb' a:y
+	execute 'diffthis'
+endfunc
+"augroup filetypedetect
+""	au BufRead,BufNewFile *.php 
+""	if search('div')>0 |
+""		set ft=phtml.html |
+""	endif
+" augroup END
