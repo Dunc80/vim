@@ -24,6 +24,7 @@
 "or for short :so%
 "
 "
+
 set encoding=utf-8
 set nocompatible              " be iMproved, required
 " set the runtime path to include Vundle and initialize
@@ -94,7 +95,7 @@ runtime macros/matchit.vim
 set t_Co=256
 "let g:solarized_termcolors=256
 "Set the colorscheme
-colorscheme koehler
+colorscheme elflord
 "set background=dark
 "" no one is really happy until you have this shortcuts
 "cnoreabbrev W! w!
