@@ -229,8 +229,6 @@ let g:tablineclosebutton=1
 "ctrl p searches dot files
 "let g:ctrlp_show_hidden = 1
 "noremap :h tab help
-imap ` <esc>
-noremap ` <esc>
 set ignorecase
 set smartcase
 set backupdir=~/.vim/backup//
