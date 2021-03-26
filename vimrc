@@ -75,6 +75,8 @@ Plugin 'jamessan/vim-gnupg'
 Plugin 'mkitt/tabline.vim'
 Plugin 'webdevel/tabulous'
 Plugin 'wakatime/vim-wakatime'
+Plugin 'ggandor/vim-srt-sync'
+Plugin 'simplenote-vim/simplenote.vim'
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -151,6 +153,81 @@ else
 	let g:airline_symbols.readonly = ''
 	let g:airline_symbols.linenr = ''
 endif
+" ----- simplenote settings ---
+:source ~/Documents/me/security/simplenote.txt
+"let g:SimplenoteSingleWindow=1
+let g:SimplenoteVertical=1
+let g:SimplenoteListSize=70
+let g:SimplenoteFiletype="markdown"
+let g:SimplenoteNoteFormat="%F%-40N%>[%T][%D]"
+"let g:SimplenoteStrftime="%a, %d %b %Y %H:%M:%S"
+let g:SimplenoteStrftime="%d-%m-%y %H:%M:%S"
+"open Simplenote
+"cnoreabbrev sn call OpenSimplenote()
+command! -nargs=* SN call OpenSimplenote(<f-args>)
+
+function! OpenSimplenote(...)
+		let s:tags = ""
+		let n = 1
+		let s:totalargs = a:0
+	if s:totalargs > 0
+		for n in range(1, s:totalargs)
+		let s:tags = s:tags.",".get(a:, n, 0)
+		"echo s:tags
+	endfor
+	endif
+   let s:winids = win_findbuf(bufnr('Simplenote'))
+	 if len(s:winids) > 0
+    call win_gotoid(s:winids[0])
+		execute 'SimplenoteList' s:tags
+	else
+		tabnew 
+		execute 'SimplenoteList' s:tags
+endif
+endfunction
+
+"new note
+cnoreabbrev SNN call SimplenoteNew()
+function! SimplenoteNew()
+   let s:winids = win_findbuf(bufnr('Simplenote'))
+	 if len(s:winids) > 0
+    call win_gotoid(s:winids[0])
+		vnew
+		SimplenoteNew
+		SimplenoteList
+	else
+		tabnew 
+		SimplenoteNew
+		SimplenoteList
+endif
+endfunction
+
+cnoreabbrev SNT SimplenoteTag
+
+"save current buffer as note
+"cnoreabbrev snw call SimplenoteSaveAsNote()
+"function! SimplenoteSaveAsNote()
+"save file if it is already a file
+"open new tab for Simplenote or go to Simplenote tab
+"open new buffer
+"paste contents of previous buffer
+"save as a note
+"endfunction
+
+"let s:totaltabs = tabpagenr("$")
+"let s:tabs = 1
+"for s:tabs in range(1,s:totaltabs)
+	"if gettabvar(s:tabs, bufnr("Simplenote")) > 0
+       "echo 'simplenote is open'
+       """:exe bnr . "wincmd w"
+    "else
+       "echo 'simplenote is not existent'
+       ""silent execute 'split ' . a:buffername
+    "endif
+"endfor
+
+
+
 " ----- scrooloose/syntastic settings -----
 let g:syntastic_error_symbol = '✘'
 let g:syntastic_warning_symbol = "▲"
@@ -234,7 +311,7 @@ set smartcase
 set backupdir=~/.vim/backup//
 set dir=~/.vim/swap//
 set undodir=~/.vim/undo//
-cnoreabbrev cs tab drop ~/vim/cheatsheet.txt <cr> :help<cr>
+cnoreabbrev CS tab drop ~/vim/cheatsheet.txt <cr> :help<cr>
 fun! Diff(x, y)
 	execute 'tab sb' a:x
 	execute 'diffthis'

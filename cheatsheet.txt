@@ -10,12 +10,20 @@ CTRL-T or CTRL-O to go back
 open this file, in a new tab, split with the vim help file
 or change to that tab if it is already open
 >
-	:cs
+	:CS
 
 change to next or previous tab
 >
 	gt
 	Gt
+
+open simplenote in a new tab (SimpleNote)
+
+	:SN
+make a new note in simple note (SimpleNote New)
+	:SNN
+edit simple note tags (SimpleNote Tags)
+	:SNT
 
 change to tab n
 >
@@ -27,7 +35,7 @@ change to tab n
 |git||
 |useful_commands|
 |editing_this_file|
-
+|GPG|
 
 
 ===================================================
@@ -191,6 +199,18 @@ to make the links work run
 a line of at least 6 equals symbols ====== will turn purple as a section divider
 =======================================================
 
+*GPG*
+
+The jamessan/vim-gnupg plugin implements transparent editing of gpg encrypted files
+Gnugpg must first be installed with these commands
+	sudo apt-get install gnupg gnupg2
+	alias gpg="gpg2"
+and any encryption keys needed should be handled by GnuPG
+for example to import a key use
+	gpg --import patt/to/private.key
+
+
+=======================================================
 
 
 Grep
