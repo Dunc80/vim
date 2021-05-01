@@ -2,6 +2,7 @@ sudo apt install vim-gtk
 sudo apt install exuberant-ctags
 sudo apt install git-flow
 sudo apt install powerline
+sudo apt install gnupg2
 
 # remove existing .vimrc
 rm ~/.vimrc

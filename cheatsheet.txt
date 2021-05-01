@@ -15,7 +15,7 @@ or change to that tab if it is already open
 change to next or previous tab
 >
 	gt
-	Gt
+	gT
 
 open simplenote in a new tab (SimpleNote)
 
@@ -175,6 +175,18 @@ toggle search highlighting
 >
 	\h
 
+search and replace
+
+:s/searchterm/replacewith/g
+
+:s/searchterm/replacewith/gc ask for confirmation first
+
+:s/<searchterm\>/replacewith/g only whole words exactly matching searchterm
+
+
+:s/searchterm/replacewith only in selected text
+
+
 "open file
 :e /path/to/file
 
@@ -211,8 +223,10 @@ for example to import a key use
 
 
 =======================================================
+to open a url under the cursor
 
-
+gx
+=======================================================
 Grep
 
 grep -rl

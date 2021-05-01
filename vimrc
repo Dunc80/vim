@@ -71,6 +71,7 @@ Plugin 'sheerun/vim-polyglot'
 Plugin '2072/PHP-Indenting-for-VIm'
 "Plugin 'stanangeloff/php.vim'
 Plugin 'vim-scripts/SQLUtilities'
+"this is for reading GPG encrypted files
 Plugin 'jamessan/vim-gnupg'
 Plugin 'mkitt/tabline.vim'
 Plugin 'webdevel/tabulous'
