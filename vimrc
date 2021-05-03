@@ -27,6 +27,13 @@
 
 set encoding=utf-8
 set nocompatible              " be iMproved, required
+
+" use these for profiling how vim uses resources
+"profile start ~/Documents/profile.log
+"profile func *
+"profile file *
+
+
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
@@ -51,32 +58,61 @@ Plugin 'VundleVim/Vundle.vim'
 " different version somewhere else.
 "Plugin 'ascenator/L9', {'name': 'newL9'}
 "Plugin 'jistr/vim-nerdtree-tabs'
+"git automation
 Plugin 'tpope/vim-fugitive'
+"branch viewer for git
 Plugin 'sodapopcan/vim-twiggy'
-Plugin 'scrooloose/nerdtree'
+"nerdtree filesystem viewer
+"Plugin 'preservim/nerdtree'
+"fern filesystem viewer
+Plugin 'lambdalisue/fern.vim'
+Plugin 'lambdalisue/nerdfont.vim'
+Plugin 'lambdalisue/glyph-palette.vim'
+Plugin 'lambdalisue/fern-renderer-nerdfont.vim'
+Plugin 'lambdalisue/fern-git-status.vim'
+Plugin 'lambdalisue/fern-hijack.vim'
+"info at bottom of buffer
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
+"syntax error highlighting
+" :help syntastic
+"for more info
 Plugin 'scrooloose/syntastic'
+"automatic ctags generation
 Plugin 'xolox/vim-misc'
 Plugin 'xolox/vim-easytags'
-Plugin 'majutsushi/tagbar'
+"tagbar to navigate tags
+Plugin 'preservim/tagbar'
 "automatic closing of quotes, parentheses etc
 Plugin 'Raimondi/delimitMate'
-Plugin 'christoomey/vim-tmux-navigator'
+"adds easier window navigation with ctrl+direction
+"Plugin 'christoomey/vim-tmux-navigator'
+"autocloses html tags
 Plugin 'HTML-AutoCloseTag'
+"shows buffers open at top
 Plugin 'fholgado/minibufexpl.vim'
+"ctrl+p fuzzy file search
 Plugin 'ctrlpvim/ctrlp.vim'
+"shows colors of hex codes
 Plugin 'lilydjwg/colorizer'
-Plugin 'sheerun/vim-polyglot'
+"syntax highlighting for many languages
+"Plugin 'sheerun/vim-polyglot'
 Plugin '2072/PHP-Indenting-for-VIm'
-"Plugin 'stanangeloff/php.vim'
 Plugin 'vim-scripts/SQLUtilities'
 "this is for reading GPG encrypted files
 Plugin 'jamessan/vim-gnupg'
-Plugin 'mkitt/tabline.vim'
-Plugin 'webdevel/tabulous'
+"show tabs at top
+"Plugin 'mkitt/tabline.vim'
+"enhances tabline
+"Plugin 'webdevel/tabulous'
+"track vim usage in wakatime
 Plugin 'wakatime/vim-wakatime'
+"edit subtitles files
 Plugin 'ggandor/vim-srt-sync'
+"these two work together to display markdown files, with folding and toc
+Plugin 'godlygeek/tabular'
+Plugin 'plasticboy/vim-markdown'
+"view and edit SimpleNote notes
 Plugin 'simplenote-vim/simplenote.vim'
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -113,6 +149,41 @@ colorscheme elflord
 "cnoreabbrev Qall qall
 "
 "
+"------ fern settings -----
+let g:fern#renderer = "nerdfont"
+"let g:fern#disable_default_mappings = 1
+
+noremap <silent> <Leader>f :Fern . -drawer -reveal=% -toggle -width=35<CR><C-w>=
+
+function! FernInit() abort
+  nmap <buffer><expr>
+        \ <Plug>(fern-my-open-expand-collapse)
+        \ fern#smart#leaf(
+        \   "\<Plug>(fern-action-open:select)",
+        \   "\<Plug>(fern-action-expand)",
+        \   "\<Plug>(fern-action-collapse)",
+        \ )
+  nmap <buffer> <CR> <Plug>(fern-my-open-expand-collapse)
+  nmap <buffer> <2-LeftMouse> <Plug>(fern-my-open-expand-collapse)
+  nmap <buffer> n <Plug>(fern-action-new-path)
+  nmap <buffer> m <Plug>(fern-action-move)
+  nmap <buffer> M <Plug>(fern-action-rename)
+  nmap <buffer> r <Plug>(fern-action-reload)
+  nmap <buffer> cd <Plug>(fern-action-cd)
+  nmap <buffer><nowait> < <Plug>(fern-action-leave)
+  nmap <buffer><nowait> > <Plug>(fern-action-enter)
+endfunction
+
+augroup FernGroup
+  autocmd!
+  autocmd FileType fern call FernInit()
+augroup END
+
+
+
+
+
+
 " ----- vim-airline settings -----
 " Always show statusbar
 set laststatus=2
@@ -232,21 +303,31 @@ cnoreabbrev SNT SimplenoteTag
 " ----- scrooloose/syntastic settings -----
 let g:syntastic_error_symbol = '✘'
 let g:syntastic_warning_symbol = "▲"
-augroup mySyntastic
-	au!
-	au FileType tex let b:syntastic_mode = "passive"
-augroup END
+
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
 " ----- xolox/vim-easytags settings -----
 " Where to look for tags files
 "set tags=./tags;,~/.vimtags
+let g:easytags_auto_highlight=0
 "Sensible defaults
-"let g:easytags_events = ['BufReadPost', 'BufWritePost']
-"let g:easytags_async = 1
-"let g:easytags_dynamic_files = 2
-"let g:easytags_resolve_links = 1
-"let g:easytags_suppress_ctags_warning = 1
-"let g:tagbar_width=20
-"let g:miniBufExplUseSingleClick = 1
+let g:easytags_events = ['BufReadPost', 'BufWritePost']
+let g:easytags_async = 1
+let g:easytags_dynamic_files = 2
+let g:easytags_resolve_links = 1
+let g:easytags_suppress_ctags_warning = 1
+let g:tagbar_width=20
+let g:miniBufExplUseSingleClick = 1
+
+
+
 "----- majutsushi/tagbar settings -----
 "Open/close tagbar with \b
 nmap <silent> <leader>b :TagbarToggle<CR>
@@ -295,15 +376,16 @@ nnoremap <C-n> :call NumberToggle()<cr>
 "toggle search highlighting
 noremap <leader>h :set hlsearch!<cr>
 " To have NERDTree always open on startup
-let g:nerdtree_tabs_open_on_console_startup=1
-au VimEnter *  NERDTree
-let NERDTreeShowBookmarks=1
-let g:NERDTreeWinSize=25
-let g:NERDTreeDirArrows=0
-hi TabLine      ctermfg=Black  ctermbg=Green     cterm=NONE
-hi TabLineFill  ctermfg=Black  ctermbg=Green     cterm=NONE
-hi TabLineSel   ctermfg=White  ctermbg=DarkBlue  cterm=NONE
-let g:tablineclosebutton=1
+"let g:nerdtree_tabs_open_on_console_startup=1
+
+"au VimEnter *  NERDTree
+"let NERDTreeShowBookmarks=1
+"let g:NERDTreeWinSize=25
+"let g:NERDTreeDirArrows=0
+"hi TabLine      ctermfg=Black  ctermbg=Green     cterm=NONE
+"hi TabLineFill  ctermfg=Black  ctermbg=Green     cterm=NONE
+"hi TabLineSel   ctermfg=White  ctermbg=DarkBlue  cterm=NONE
+"let g:tablineclosebutton=1
 "ctrl p searches dot files
 "let g:ctrlp_show_hidden = 1
 "noremap :h tab help
@@ -312,7 +394,7 @@ set smartcase
 set backupdir=~/.vim/backup//
 set dir=~/.vim/swap//
 set undodir=~/.vim/undo//
-cnoreabbrev CS tab drop ~/vim/cheatsheet.txt <cr> :help<cr>
+cnoreabbrev CS tab drop ~/vim/cheatsheet.md <cr> :help<cr>
 fun! Diff(x, y)
 	execute 'tab sb' a:x
 	execute 'diffthis'
@@ -325,3 +407,7 @@ endfunc
 ""		set ft=phtml.html |
 ""	endif
 " augroup END
+"
+"
+"
+

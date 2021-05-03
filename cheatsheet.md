@@ -1,46 +1,53 @@
-*cheatsheet.txt*	For Vim version 8.0.  Last change
-
-
 This file is a cheat sheet of commands I use relating to my own vim configuration and workflows
 Mostly stuff I forget a lot and have to refer to, or stuff I'm still learning, which is everything
-====================================================================
-use CTRL-] to follow links in the contents
-CTRL-T or CTRL-O to go back
 
 open this file, in a new tab, split with the vim help file
 or change to that tab if it is already open
->
+
 	:CS
 
+to fold and unfold
+
+	za
+# fern
+new file or folder - `n`
+delete file or folder - `D`
+move file - `m`
+mark file - `-`
+rename file(s) and/or folders - `M`
+toggle hidden files/folders - `!`
+reload fern - `r`
+open in horizontal split - `s`
+open in vertical split - `v`
+enter folder - `>`
+go back/up one folder - `<`
+# tabs
 change to next or previous tab
->
+
 	gt
 	gT
 
+change to tab n
+
+	n gt
+# Simplenote
 open simplenote in a new tab (SimpleNote)
 
 	:SN
+
 make a new note in simple note (SimpleNote New)
+
 	:SNN
+
 edit simple note tags (SimpleNote Tags)
+
 	:SNT
 
-change to tab n
->
-	n gt
 
 
 
-*CONTENTS*
-|git||
-|useful_commands|
-|editing_this_file|
-|GPG|
+# git
 
-
-===================================================
- *git*
->
 		HOW GIT-FLOW BRANCHES WORK
 
 	bugfix	                            o--o               o--o
@@ -60,178 +67,191 @@ change to tab n
 	hotfix                \                                 o----o
 		               \                               /      \
 	support	                o-----------------------------o--------o v1.1.1
-<
-2 primary branches, 'master' and 'develop'
 
-'master' always reflects the most current production ready state of the software
-
-'develop' reflects the lastest development for the next release
-
-'feature' branches are to develop specific features, which are then merged
+two primary branches, 'master' and 'develop'
+* 'master' always reflects the most current production ready state of the software
+* 'develop' reflects the lastest development for the next release
+* 'feature' branches are to develop specific features, which are then merged
 into 'develop' when they are ready
-
-'release' branches are to ready the 'develop' branch from a chosen point to merge
+* 'release' branches are to ready the 'develop' branch from a chosen point to merge
 with 'master' for a release, after any big fixes they are merged with 'master' and
 back into 'develop'
-
-'hotfix' branches are to fix any bugs in a release, and merged straight back
+* 'hotfix' branches are to fix any bugs in a release, and merged straight back
 into 'master' and also merged into 'develop' or 'release' if there is a
 release branch open at the time, the 'release' branch will then be merged back
 into 'develop' anyway
-
-'support' branches fork from the master branch to support previous versions of the software and are not merged back into master. A 'hotfix' can be used to fix
+* 'support' branches fork from the master branch to support previous versions of the software and are not merged back into master. A 'hotfix' can be used to fix
 bug and then merge the fix back into the 'support' branch AND the 'master' branch AND the 'develop' branch (possibly via an open release branch), so, for example, version
 1.2 will be fixed to version 1.2.1 on the 'support' branch as well as fixing version 2.0 to version
 2.0.1 on the 'master' branch
-
-'bugfix' branches are forked from a 'feature' branch, or the 'develop' branch,
+* 'bugfix' branches are forked from a 'feature' branch, or the 'develop' branch,
 to fix one bug, similar to a 'hotfix' branch fixing one bug on a release on
 the master branch
 
-"make a new git repo
-:G init
+make a new git repo
+
+	:G init
 
 initialise git-flow, this creates the branches
-:G flow init
+
+	:G flow init
+
 note :!git flow init does not work from inside vim with my configuration, but
 using the fugitive plugin i.e :G instead of :!git did work
 
 create a feature branch
-:G flow feature start feature_branch_name
+
+	:G flow feature start feature_branch_name
 
 finish the feature branch, merge back to develop
-:G flow feature finish feature_branch_name
 
+	:G flow feature finish feature_branch_name
 
 start a release branch
-:G flow release start 0.1.0
+
+	:G flow release start 0.1.0
 finish a release branch
-:G flow release finish '0.1.0'
+
+	:G flow release finish '0.1.0'
+
 I haven't tried these commands yet, change this file if I have to do something
 else to get them to work...
 
 hotfix branch commands
-:G flow hotfix start hotfix_branch_name
-:G flow hotfix finish hotfix_branch_name
+
+	:G flow hotfix start hotfix_branch_name
+	:G flow hotfix finish hotfix_branch_name
 
 
 to save the file
-:Gwrite or :Gw
+
+	:Gwrite or :Gw
 this will save the file, and also works like :git add to write to the index
 version of the file
 
 to save the branch
-:G add .
-:G commit
+	
+	:G add .
+	:G commit
 
 to sync changes with the online repository
-:G push
+
+	:G push
 
 to change branches use the Twiggy plugin for visual navigation
 from inside a buffer in the git repository
-:Twiggy
+	
+	:Twiggy
 
 
-"create a new branch
-:!git checkout -b feature_x
+create a new branch
+	
+	:!git checkout -b feature_x
 or
-:!git branch feature_x
-:!git push -u origin feature_x
-"to merge
-:G checkout branch_to_merge_to
-:G merge branch_to_merge_from
-=========================================================
+	
+	:!git branch feature_x
+	:!git push -u origin feature_x
 
-*useful_commands*
+to merge
+	
+	:G checkout branch_to_merge_to
+	:G merge branch_to_merge_from
+
+# useful_commands
 
 to open 2 buffers in a vertical split
-:buffers
+
+	:buffers
+
 to find the list of buffer numbers, we want x and y
-:tab sb x
+
+	:tab sb x
+
 opens buffer x in a new tab
-:vert sb y
+	
+	:vert sb y
+
 opens buffer y in a vertical split
-:sb y
+
+	:sb y
+
 opens buffer y in a horizontal split
 
 to compare them run 
-:diffthis
+
+	:diffthis
+
 in both windows
 or call a function I wrote in my .vimrc
-:call Diff(x, y)
+	
+	:call Diff(x, y)
 
 to open buffer x in current window
-:bx
+	
+	:bx
 
 toggle line numbering
 	
 	<C-n>
 
 format code for whole file
->
+
 	\=
 
 toggle search highlighting
->
+
 	\h
 
 search and replace
 
-:s/searchterm/replacewith/g
+	:s/searchterm/replacewith/g
+	:s/searchterm/replacewith/gc ask for confirmation first
+	:s/<searchterm\>/replacewith/g only whole words exactly matching searchterm
+	:s/searchterm/replacewith only in selected text
 
-:s/searchterm/replacewith/gc ask for confirmation first
+open file
+	
+	:e /path/to/file
 
-:s/<searchterm\>/replacewith/g only whole words exactly matching searchterm
+initialise composer on a new project
+	
+	:!composer init
 
-
-:s/searchterm/replacewith only in selected text
-
-
-"open file
-:e /path/to/file
-
-"initialise composer on a new project
-:!composer init
 update composer repositories
-:!composer update
+	
+	:!composer update
 
 
-=======================================================
-
-*editing_this_file*
-
-use | to create links eg |link | without the space looks like |link|
-use * to create link destinations eg *link * without the space looks like *link*
-to make the links work run
->
-	:helptags ~/vim
-
-
-
-a line of at least 6 equals symbols ====== will turn purple as a section divider
-=======================================================
-
-*GPG*
+# GPG
 
 The jamessan/vim-gnupg plugin implements transparent editing of gpg encrypted files
 Gnugpg must first be installed with these commands
+
 	sudo apt-get install gnupg gnupg2
 	alias gpg="gpg2"
 and any encryption keys needed should be handled by GnuPG
 for example to import a key use
+
 	gpg --import patt/to/private.key
 
 
-=======================================================
 to open a url under the cursor
 
-gx
-=======================================================
-Grep
+	gx
 
-grep -rl
+# Grep
 
+	grep -rl
 
+# Working Directory
 
+The present working directory can be displayed in Vim with:
 
- vim:tw=78:fo=tcq2:isk=!-~,^*,^\|,^\":ts=8:ft=help:norl:
+	:pwd
+To change to the directory of the currently open file (this sets the current directory for all windows in Vim):
+
+	:cd %:p:h
+You can also change the directory only for the current window (each window has a local current directory that can be different from Vim's global current directory):
+
+	:lcd %:p:h
+In these commands, % gives the name of the current file, %:p gives its full path, and %:p:h gives its directory (the "head" of the full path).
