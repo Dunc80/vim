@@ -29,7 +29,10 @@ ln -s ~/vim/vimrc ~/.vimrc
 mkdir ~/.vim/swap/
 mkdir ~/.vim/undo/
 mkdir ~/.vim/backup/
+mkdir ~/.vim/after/
+mkdir ~/.vim/after/plugin/
 
+ln -s ~/vim/after.vim ~/.vim/after/plugin/after.vim
 # install vundle
 #git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 #download plugins

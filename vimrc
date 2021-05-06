@@ -36,7 +36,9 @@ set nocompatible              " be iMproved, required
 
 call plug#begin()
 "Colour schemes
-Plug 'rafi/awesome-vim-colorschemes'
+"Plug 'rafi/awesome-vim-colorschemes'
+Plug 'NLKNguyen/papercolor-theme'
+Plug 'jdsimcoe/abstract.vim'
 Plug 'ghifarit53/tokyonight-vim'
 Plug 'rakr/vim-one'
 Plug 'tomasiser/vim-code-dark'
@@ -50,8 +52,6 @@ Plug 'keelbeelveel/miamineon', { 'do': function('Miamineon')}
 Plug 'nanotech/jellybeans.vim'
 Plug 'ethantrithon/elementary.vim'
 Plug 'mrkn/mrkn256.vim'
-Plug 'DankNeon/vim'
-Plug 'nonetallt/vim-neon-dark'
 "git automation
 Plug 'tpope/vim-fugitive'
 "branch viewer for git
@@ -75,10 +75,13 @@ Plug 'scrooloose/syntastic'
 "automatic ctags generation
 "Plug 'xolox/vim-misc'
 "Plug 'xolox/vim-easytags'
-"Plug 'universal-ctags/ctags'
-Plug 'ludovicchabant/vim-gutentags'
+Plug 'universal-ctags/ctags'
+"Plug 'ludovicchabant/vim-gutentags'
 "tagbar to navigate tags
-"Plug 'preservim/tagbar'
+Plug 'preservim/tagbar'
+"also shows tags but I find tagbar works better
+"EXCEPT vista shows TOC for simplenote notes 
+"and tagbar doesn't
 Plug 'liuchengxu/vista.vim'
 "automatic closing of quotes, parentheses etc
 Plug 'Raimondi/delimitMate'
@@ -116,8 +119,8 @@ Plug 'plasticboy/vim-markdown'
 "view and edit SimpleNote notes
 Plug 'simplenote-vim/simplenote.vim'
 "view git changes
-Plug 'mhinz/vim-signify'
-"Plug 'airblade/vim-gitgutter'
+"Plug 'mhinz/vim-signify'
+Plug 'airblade/vim-gitgutter'
 "Snippets - completion menu
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
@@ -127,15 +130,9 @@ Plug 'dense-analysis/ale'
 Plug 'mhinz/vim-startify'
 " All of your Plugins must be added before the following line
 call plug#end()
-"filetype plugin indent on    " required
+filetype plugin indent on    " required
 " To ignore plugin indent changes, instead use:
-"filetype plugin on
-"
-" Brief help
-" :PluginList       - lists configured plugins
-" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
-" :PluginSearch foo - searches for foo; append `!` to refresh local cache
-" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+filetype plugin on
 "
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
@@ -148,8 +145,10 @@ set t_Co=256
 "colorscheme miamineon
 "let g:airline_theme = 'miamineon'
 "colorscheme tokyonight
-colorscheme PaperColor
+"colorscheme PaperColor
+colorscheme abstract
 set background=dark
+
 "set leader as space
 let mapleader = " "
 "------ fern settings -----
@@ -221,8 +220,10 @@ nnoremap  <Leader>/ :BLines<CR>
 nnoremap  <Leader>h :Helptags<CR>
 """"history of Recently opened files
 nnoremap  <Leader>r :History<CR>
-""""search for my own mapped commands
+"search for my own mapped commands
 nnoremap  <Leader>m :Maps<CR>^<space<space>vimrc<space>
+""""search for tags in the current buffer
+nnoremap  <Leader>t :BTags<CR>
 """"use ripgrep instead of grep by default in vim
 set grepprg=rg\ --vimgrep\ --smart-case\ --follow
 """"make :Rg only search for file contents, not file names as well
@@ -261,10 +262,10 @@ let g:fzf_colors =
 
 " ---- Vista.vim ----
 nnoremap <leader>v :Vista!!<CR>
-nnoremap <leader>t :Vista finder<CR>
-let g:vista_fzf_preview = ['right:50%']
+"nnoremap <leader>t :Vista finder<CR>
+"let g:vista_fzf_preview = ['right:50%']
 "let g:vista_keep_fzf_colors = 1
-
+"let g:vista_default_executive = 'ctags'
 " ----- gutentags -----
 set statusline+=%{gutentags#statusline()}
 " ----- vim-airline settings -----
@@ -398,8 +399,8 @@ let g:easytags_suppress_ctags_warning = 1
 "let g:tagbar_width=20
 "let g:miniBufExplUseSingleClick = 1
 "----- preservim/tagbar settings -----
-"Open/close tagbar with \b
-"nmap <leader>t :TagbarToggle<CR>
+"Open/close tagbar with <leader>a
+nmap <leader>a :TagbarToggle<CR>
 " Uncomment to open tagbar automatically whenever possible
 "autocmd BufEnter * nested :call tagbar#autoopen(0)
 " ----- Raimondi/delimitMate settings -----
@@ -483,8 +484,26 @@ endfunc
 " augroup END
 "
 "
+"Shortcuts for git
+
+nnoremap <leader>g :vertical Git<CR>
+nnoremap <leader>d :Gvdiff<CR>
 "navigate windows more easily
 nnoremap <tab>h <C-w>h
 nnoremap <tab>j <C-w>j
 nnoremap <tab>k <C-w>k
 nnoremap <tab>l <C-w>l
+
+"This is called after all the plugins and 
+"setttings in this vimrc file are loaded
+function! After()
+"""the Abstract colour scheme loads very aggressively
+"""and doesn't have good diff colouring
+"highlight DiffAdd ctermfg=NONE ctermbg=101 144 143 
+highlight DiffAdd ctermfg=NONE ctermbg=143
+highlight DiffChange ctermfg=NONE ctermbg=NONE
+highlight DiffDelete ctermfg=196 ctermbg=NONE
+highlight DiffText ctermfg=NONE ctermbg=143
+endfunction
+
+

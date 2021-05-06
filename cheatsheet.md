@@ -336,12 +336,6 @@ learn about git staging and hunks or chunks or whatever they call it
 choose between signify and gitgutter
 shortcuts and instructions for signify or gitgutter
 
-try out rhysd/git-messenger.vim 
-add instructions for it to this file
-or write instructions to do the same thing with Fugitive
-I think it is just Glog
-or with FZF :Commits and :BCommits
-https://www.reddit.com/r/vim/comments/5hynol/vertical_windows_for_fugitive_gdiff/
 
 
 
