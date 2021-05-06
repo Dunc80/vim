@@ -19,8 +19,60 @@ toggle hidden files/folders - `!`
 reload fern - `r`
 open in horizontal split - `s`
 open in vertical split - `v`
-enter folder - `>`
-go back/up one folder - `<`
+enter folder (and change tabs working directory)- `>`
+go back/up one folder (and change tabs working directory)- `<`
+change working directory - `cd`
+# Fern
+`<leader>f` - toggle fern
+fern and FZF
+`Ctrl-e` open vErtical split
+`Ctrl-o` open hOrizontal split
+`D` - delete (actually move to trash)
+
+# FZF
+
+`Ctrl-e` open in vErtical split
+`Ctrl-o` open in hOrizontal split
+`Ctrl-t` open in new tab
+FZF search syntax
+`^`
+^ foo
+`^` - e.g `^ foo` search for things starting with foo
+bar $ 
+search for things ending with bar
+ ' search for exact phrase
+foo |  bar
+search for foo OR bar
+foo !bar
+search for foo NOT bar
+
+`<leader>s` - Search for a file name
+`<leader>i` - search Inside files
+`<leader>b` - Buffers currently open 
+`<leader>/` - search in this buffer
+`<leader>h` - Help
+`<leader>r` - Recent files
+`<leader>m` - My mapped commands
+##Other FZF commands
+these may or may not be useful
+I haven't mapped them to anything easier
+Command history
+:History:
+search history
+:History/
+Lines in loaded buffers
+:Lines
+snippets from ultisnips
+:Snippets
+normal mode mappings
+:Maps
+available commands
+:Commands
+tags in the project
+:Tags
+tags in the current buffer :BTags
+search marks
+:Marks
 # tabs
 change to next or previous tab
 
@@ -47,7 +99,7 @@ edit simple note tags (SimpleNote Tags)
 
 
 # git
-
+## git-flow
 		HOW GIT-FLOW BRANCHES WORK
 
 	bugfix	                            o--o               o--o
@@ -87,7 +139,7 @@ bug and then merge the fix back into the 'support' branch AND the 'master' branc
 * 'bugfix' branches are forked from a 'feature' branch, or the 'develop' branch,
 to fix one bug, similar to a 'hotfix' branch fixing one bug on a release on
 the master branch
-
+## git commands
 make a new git repo
 
 	:G init
@@ -202,12 +254,20 @@ toggle search highlighting
 
 	\h
 
-search and replace
+# search and replace
 
 	:s/searchterm/replacewith/g
 	:s/searchterm/replacewith/gc ask for confirmation first
 	:s/<searchterm\>/replacewith/g only whole words exactly matching searchterm
 	:s/searchterm/replacewith only in selected text
+## search replace in multiple files
+from an article here
+https://dev.to/iggredible/how-to-search-faster-in-vim-with-fzf-vim-36ko
+1. Clear our buffers (:Buffers) first. Our buffers list should contain only the needed files. We can clear it with %bd | e# | bd# (or restart Vim).
+2. Run :Files.
+3. Select all files you want to perform search and replace on. To select multiple files, use Tab / Shift+Tab. This is only possible if we have -m in FZF_DEFAULT_OPTS.
+4. Run :bufdo %s/pizza/donut/g | update.
+Our command :bufdo %s/pizza/donut/g | update looks similar to :cfdo %s/pizza/donut/g | update. That's because they are. Instead of performing substitution on all quickfix (cfdo) entries, we perform our substitution on all buffer (bufdo) entries.
 
 open file
 	
@@ -255,3 +315,47 @@ You can also change the directory only for the current window (each window has a
 
 	:lcd %:p:h
 In these commands, % gives the name of the current file, %:p gives its full path, and %:p:h gives its directory (the "head" of the full path).
+
+
+# Tags/Toc
+`<leader>v` - toggle Vista
+`<leader>t` - tag search with Vista and FZF
+
+
+
+
+# todo
+
+
+
+watch all the Fugitive videos
+instructions for getting out of Gdiff
+https://github.com/tpope/vim-fugitive/issues/36
+learn about git staging and hunks or chunks or whatever they call it
+
+choose between signify and gitgutter
+shortcuts and instructions for signify or gitgutter
+
+try out rhysd/git-messenger.vim 
+add instructions for it to this file
+or write instructions to do the same thing with Fugitive
+I think it is just Glog
+or with FZF :Commits and :BCommits
+https://www.reddit.com/r/vim/comments/5hynol/vertical_windows_for_fugitive_gdiff/
+
+
+
+pull to pi
+
+fold and unfold instructions in this file
+make a better list of markdown commands that work well in vim and simplenote
+instructions for opening buffer X in current window
+it's `:bX` where `X` is the buffer number. Only works if current buffer is saved
+actually I've already made a link to open buffers with FZF its `<leader>b`
+
+
+
+
+try out ulti snips
+
+

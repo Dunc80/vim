@@ -5,10 +5,10 @@
 " run this to install vundle
 " :!git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 " restart vim and then run this to download all the plugins in this file
-" :PluginInstall
+" :PlugInstall
 "
 " or just type
-" vim +PluginInstall
+" vim +PlugInstall
 " from the terminal
 "
 "using the .vimrc file in your home folder will require -E
@@ -21,102 +21,113 @@
 "manually create the folder for backup files (~/.vim/backup/)
 "
 "to reload this file after editing it use :source %
-"or for short :so%
+"or for short :so %
 "
 "
-
 set encoding=utf-8
 set nocompatible              " be iMproved, required
-
 " use these for profiling how vim uses resources
 "profile start ~/Documents/profile.log
 "profile func *
 "profile file *
+"
+"
 
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
-" The following are examples of different formats supported.
-" Keep Plugin commands between vundle#begin/end.
-" plugin on GitHub repo
-"Plugin 'tpope/vim-fugitive'
-" plugin from http://vim-scripts.org/vim/scripts.html
-"Plugin 'L9'
-" Git plugin not hosted on GitHub
-"Plugin 'git://git.wincent.com/command-t.git'
-" git repos on your local machine (i.e. when working on your own plugin)
-"Plugin 'file:///home/gmarik/path/to/plugin'
-" The sparkup vim script is in a subdirectory of this repo called vim.
-" Pass the path to set the runtimepath properly.
-"Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
-" Install L9 and avoid a Naming conflict if you've already installed a
-" different version somewhere else.
-"Plugin 'ascenator/L9', {'name': 'newL9'}
-"Plugin 'jistr/vim-nerdtree-tabs'
+call plug#begin()
+"Colour schemes
+Plug 'rafi/awesome-vim-colorschemes'
+Plug 'ghifarit53/tokyonight-vim'
+Plug 'rakr/vim-one'
+Plug 'tomasiser/vim-code-dark'
+Plug 'baskerville/bubblegum'
+function! Miamineon(x)
+!mkdir ~/.vim/colors/
+!cp ~/.vim/plugged/miamineon/miamineon.vim ~/.vim/colors/
+!cp ~/.vim/plugged/miamineon/miamineon-airline.vim ~/.vim/plugged/vim-airline-themes/autoload/airline/themes/miamineon.vim
+endfunction
+Plug 'keelbeelveel/miamineon', { 'do': function('Miamineon')}
+Plug 'nanotech/jellybeans.vim'
+Plug 'ethantrithon/elementary.vim'
+Plug 'mrkn/mrkn256.vim'
+Plug 'DankNeon/vim'
+Plug 'nonetallt/vim-neon-dark'
 "git automation
-Plugin 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive'
 "branch viewer for git
-Plugin 'sodapopcan/vim-twiggy'
+Plug 'sodapopcan/vim-twiggy'
 "nerdtree filesystem viewer
-"Plugin 'preservim/nerdtree'
+"Plug 'preservim/nerdtree'
 "fern filesystem viewer
-Plugin 'lambdalisue/fern.vim'
-Plugin 'lambdalisue/nerdfont.vim'
-Plugin 'lambdalisue/glyph-palette.vim'
-Plugin 'lambdalisue/fern-renderer-nerdfont.vim'
-Plugin 'lambdalisue/fern-git-status.vim'
-Plugin 'lambdalisue/fern-hijack.vim'
+Plug 'lambdalisue/fern.vim'
+Plug 'lambdalisue/nerdfont.vim'
+Plug 'lambdalisue/glyph-palette.vim'
+Plug 'lambdalisue/fern-renderer-nerdfont.vim'
+Plug 'lambdalisue/fern-git-status.vim'
+Plug 'lambdalisue/fern-hijack.vim'
 "info at bottom of buffer
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 "syntax error highlighting
 " :help syntastic
 "for more info
-Plugin 'scrooloose/syntastic'
+Plug 'scrooloose/syntastic'
 "automatic ctags generation
-Plugin 'xolox/vim-misc'
-Plugin 'xolox/vim-easytags'
+"Plug 'xolox/vim-misc'
+"Plug 'xolox/vim-easytags'
+"Plug 'universal-ctags/ctags'
+Plug 'ludovicchabant/vim-gutentags'
 "tagbar to navigate tags
-Plugin 'preservim/tagbar'
+"Plug 'preservim/tagbar'
+Plug 'liuchengxu/vista.vim'
 "automatic closing of quotes, parentheses etc
-Plugin 'Raimondi/delimitMate'
+Plug 'Raimondi/delimitMate'
 "adds easier window navigation with ctrl+direction
-"Plugin 'christoomey/vim-tmux-navigator'
+"Plug 'christoomey/vim-tmux-navigator'
 "autocloses html tags
-Plugin 'HTML-AutoCloseTag'
+Plug 'vim-scripts/HTML-AutoCloseTag'
 "shows buffers open at top
-Plugin 'fholgado/minibufexpl.vim'
+"Plug 'fholgado/minibufexpl.vim'
 "ctrl+p fuzzy file search
-Plugin 'ctrlpvim/ctrlp.vim'
+"Plug 'ctrlpvim/ctrlp.vim'
+"FZF fuzzy file search
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+"Plug 'LumaKernel/fern-mapping-fzf.vim'
 "shows colors of hex codes
-Plugin 'lilydjwg/colorizer'
+Plug 'lilydjwg/colorizer'
 "syntax highlighting for many languages
-"Plugin 'sheerun/vim-polyglot'
-Plugin '2072/PHP-Indenting-for-VIm'
-Plugin 'vim-scripts/SQLUtilities'
+"Plug 'sheerun/vim-polyglot'
+Plug '2072/PHP-Indenting-for-VIm'
+Plug 'vim-scripts/SQLUtilities'
 "this is for reading GPG encrypted files
-Plugin 'jamessan/vim-gnupg'
+Plug 'jamessan/vim-gnupg'
 "show tabs at top
-"Plugin 'mkitt/tabline.vim'
+"Plug 'mkitt/tabline.vim'
 "enhances tabline
-"Plugin 'webdevel/tabulous'
+"Plug 'webdevel/tabulous'
 "track vim usage in wakatime
-Plugin 'wakatime/vim-wakatime'
+Plug 'wakatime/vim-wakatime'
 "edit subtitles files
-Plugin 'ggandor/vim-srt-sync'
+Plug 'ggandor/vim-srt-sync'
 "these two work together to display markdown files, with folding and toc
-Plugin 'godlygeek/tabular'
-Plugin 'plasticboy/vim-markdown'
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
 "view and edit SimpleNote notes
-Plugin 'simplenote-vim/simplenote.vim'
+Plug 'simplenote-vim/simplenote.vim'
+"view git changes
+Plug 'mhinz/vim-signify'
+"Plug 'airblade/vim-gitgutter'
+"Snippets - completion menu
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+"asynchronous lint engine
+Plug 'dense-analysis/ale'
+"fancy start screen
+Plug 'mhinz/vim-startify'
 " All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
+call plug#end()
+"filetype plugin indent on    " required
 " To ignore plugin indent changes, instead use:
 "filetype plugin on
 "
@@ -134,63 +145,135 @@ runtime macros/matchit.vim
 set t_Co=256
 "let g:solarized_termcolors=256
 "Set the colorscheme
-colorscheme elflord
-"set background=dark
-"" no one is really happy until you have this shortcuts
-"cnoreabbrev W! w!
-"cnoreabbrev Q! q!
-"cnoreabbrev Qall! qall!
-"cnoreabbrev Wq wq
-"cnoreabbrev Wa wa
-"cnoreabbrev wQ wq
-"cnoreabbrev WQ wq
-"cnoreabbrev W w
-"cnoreabbrev Q q
-"cnoreabbrev Qall qall
-"
-"
+"colorscheme miamineon
+"let g:airline_theme = 'miamineon'
+"colorscheme tokyonight
+colorscheme PaperColor
+set background=dark
+"set leader as space
+let mapleader = " "
 "------ fern settings -----
 let g:fern#renderer = "nerdfont"
 "let g:fern#disable_default_mappings = 1
-
-noremap <silent> <Leader>f :Fern . -drawer -reveal=% -toggle -width=35<CR><C-w>=
-
+"toggle fern with <leader> f
+noremap <silent> <Leader>f :Fern . -drawer -reveal=% -toggle -width=25 <CR><C-w>=
+"Start fern.vim on Vim startup with current directory
+""augroup my-fern-startup
+""	autocmd! *
+""	autocmd VimEnter * ++nested Fern -drawer -toggle -reveal=% -width=25 .
+""augroup END
+"custom mappings
 function! FernInit() abort
-  nmap <buffer><expr>
-        \ <Plug>(fern-my-open-expand-collapse)
-        \ fern#smart#leaf(
-        \   "\<Plug>(fern-action-open:select)",
-        \   "\<Plug>(fern-action-expand)",
-        \   "\<Plug>(fern-action-collapse)",
-        \ )
-  nmap <buffer> <CR> <Plug>(fern-my-open-expand-collapse)
-  nmap <buffer> <2-LeftMouse> <Plug>(fern-my-open-expand-collapse)
-  nmap <buffer> n <Plug>(fern-action-new-path)
-  nmap <buffer> m <Plug>(fern-action-move)
-  nmap <buffer> M <Plug>(fern-action-rename)
-  nmap <buffer> r <Plug>(fern-action-reload)
-  nmap <buffer> cd <Plug>(fern-action-cd)
-  nmap <buffer><nowait> < <Plug>(fern-action-leave)
-  nmap <buffer><nowait> > <Plug>(fern-action-enter)
+	nmap <buffer><expr>
+				\ <Plug>(fern-my-open-expand-collapse)
+				\ fern#smart#leaf(
+				\   "\<Plug>(fern-action-open:select)",
+				\   "\<Plug>(fern-action-expand)",
+				\   "\<Plug>(fern-action-collapse)",
+				\ )
+	nmap <buffer> <CR> <Plug>(fern-my-open-expand-collapse)
+	nmap <buffer> <2-LeftMouse> <Plug>(fern-my-open-expand-collapse)
+	nmap <buffer> n <Plug>(fern-action-new-path)
+	nmap <buffer> m <Plug>(fern-action-move)
+	nmap <buffer> M <Plug>(fern-action-rename)
+	nmap <buffer> r <Plug>(fern-action-reload)
+	nmap <buffer> <C-o> <Plug>(fern-action-open:split)
+	nmap <buffer> <C-e> <Plug>(fern-action-open:vsplit)
+	"Perform tcd on the root node after enter or leave action
+	nmap <buffer> <Plug>(fern-my-enter-and-tcd)
+				\ <Plug>(fern-action-enter)
+				\ <Plug>(fern-wait)
+				\ <Plug>(fern-action-tcd:root)
+	nmap <buffer> <Plug>(fern-my-leave-and-tcd)
+				\ <Plug>(fern-action-leave)
+				\ <Plug>(fern-wait)
+				\ <Plug>(fern-action-tcd:root)
+	nmap <buffer> > <Plug>(fern-my-enter-and-tcd)
+	nmap <buffer> < <Plug>(fern-my-leave-and-tcd)
 endfunction
-
 augroup FernGroup
-  autocmd!
-  autocmd FileType fern call FernInit()
+	autocmd!
+	autocmd FileType fern call FernInit()
 augroup END
+"glyph-palette  colours
+augroup my-glyph-palette
+  autocmd! *
+  autocmd FileType fern call glyph_palette#apply()
+  autocmd FileType nerdtree,startify call glyph_palette#apply()
+augroup END
+"""" ----- FZF ----
+""""open in splits and new tabs with Ctrl t/o/e
+""""Tab/hOrizontal/vErtical
+let g:fzf_action = {
+      \ 'ctrl-t': 'tab split',
+      \ 'ctrl-o': 'split',
+      \ 'ctrl-e': 'vsplit'
+  \ }
+""""search file names
+nnoremap  <leader>s :Files<CR>
+""""search inside files
+nnoremap <Leader>i :RG<CR>
+""""search buffers
+nnoremap <Leader>b :Buffers<CR>
+""""search in current buffer
+nnoremap  <Leader>/ :BLines<CR>
+""""search help
+nnoremap  <Leader>h :Helptags<CR>
+""""history of Recently opened files
+nnoremap  <Leader>r :History<CR>
+""""search for my own mapped commands
+nnoremap  <Leader>m :Maps<CR>^<space<space>vimrc<space>
+""""use ripgrep instead of grep by default in vim
+set grepprg=rg\ --vimgrep\ --smart-case\ --follow
+""""make :Rg only search for file contents, not file names as well
+command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
+""""better ripgrep integration, call RG instead of Rg
+function! RipgrepFzf(query, fullscreen)
+  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+  let initial_command = printf(command_fmt, shellescape(a:query))
+  let reload_command = printf(command_fmt, '{q}')
+  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+endfunction
+command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
+"""" [Buffers] Jump to the existing window if possible
+let g:fzf_buffers_jump = 1
+let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.9, 'border': 'sharp'} }
+
+"""" Customize fzf colors to match your color scheme
+let g:fzf_colors =
+\ { 'fg':      ['fg', 'Normal'],
+  \ 'bg':      ['bg', 'Normal'],
+  \ 'hl':      ['fg', 'Comment'],
+  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'hl+':     ['fg', 'Statement'],
+  \ 'info':    ['fg', 'PreProc'],
+  \ 'border':  ['fg', 'Ignore'],
+  \ 'prompt':  ['fg', 'Conditional'],
+  \ 'pointer': ['fg', 'Exception'],
+  \ 'marker':  ['fg', 'Keyword'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'Comment'] }
 
 
 
 
+" ---- Vista.vim ----
+nnoremap <leader>v :Vista!!<CR>
+nnoremap <leader>t :Vista finder<CR>
+let g:vista_fzf_preview = ['right:50%']
+"let g:vista_keep_fzf_colors = 1
 
-
+" ----- gutentags -----
+set statusline+=%{gutentags#statusline()}
 " ----- vim-airline settings -----
 " Always show statusbar
 set laststatus=2
 " Show PASTE if in paste mode
 let g:airline_detect_paste=1
 " Show airline for tabs too
-"let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#branch#enabled = 1
 let g:airline_powerline_fonts = 1
 if !exists('g:airline_symbols')
@@ -237,45 +320,41 @@ let g:SimplenoteStrftime="%d-%m-%y %H:%M:%S"
 "open Simplenote
 "cnoreabbrev sn call OpenSimplenote()
 command! -nargs=* SN call OpenSimplenote(<f-args>)
-
 function! OpenSimplenote(...)
-		let s:tags = ""
-		let n = 1
-		let s:totalargs = a:0
+	let s:tags = ""
+	let n = 1
+	let s:totalargs = a:0
 	if s:totalargs > 0
 		for n in range(1, s:totalargs)
-		let s:tags = s:tags.",".get(a:, n, 0)
-		"echo s:tags
-	endfor
+			let s:tags = s:tags.",".get(a:, n, 0)
+			"echo s:tags
+		endfor
 	endif
-   let s:winids = win_findbuf(bufnr('Simplenote'))
-	 if len(s:winids) > 0
-    call win_gotoid(s:winids[0])
+	let s:winids = win_findbuf(bufnr('Simplenote'))
+	if len(s:winids) > 0
+		call win_gotoid(s:winids[0])
 		execute 'SimplenoteList' s:tags
 	else
-		tabnew 
+		tabnew
 		execute 'SimplenoteList' s:tags
-endif
+	endif
 endfunction
-
 "new note
 cnoreabbrev SNN call SimplenoteNew()
 function! SimplenoteNew()
-   let s:winids = win_findbuf(bufnr('Simplenote'))
-	 if len(s:winids) > 0
-    call win_gotoid(s:winids[0])
+	let s:winids = win_findbuf(bufnr('Simplenote'))
+	if len(s:winids) > 0
+		call win_gotoid(s:winids[0])
 		vnew
 		SimplenoteNew
 		SimplenoteList
 	else
-		tabnew 
+		tabnew
 		SimplenoteNew
 		SimplenoteList
-endif
+	endif
 endfunction
-
 cnoreabbrev SNT SimplenoteTag
-
 "save current buffer as note
 "cnoreabbrev snw call SimplenoteSaveAsNote()
 "function! SimplenoteSaveAsNote()
@@ -285,34 +364,27 @@ cnoreabbrev SNT SimplenoteTag
 "paste contents of previous buffer
 "save as a note
 "endfunction
-
 "let s:totaltabs = tabpagenr("$")
 "let s:tabs = 1
 "for s:tabs in range(1,s:totaltabs)
-	"if gettabvar(s:tabs, bufnr("Simplenote")) > 0
-       "echo 'simplenote is open'
-       """:exe bnr . "wincmd w"
-    "else
-       "echo 'simplenote is not existent'
-       ""silent execute 'split ' . a:buffername
-    "endif
+"if gettabvar(s:tabs, bufnr("Simplenote")) > 0
+"echo 'simplenote is open'
+""":exe bnr . "wincmd w"
+"else
+"echo 'simplenote is not existent'
+""silent execute 'split ' . a:buffername
+"endif
 "endfor
-
-
-
 " ----- scrooloose/syntastic settings -----
 let g:syntastic_error_symbol = '✘'
 let g:syntastic_warning_symbol = "▲"
-
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
-
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
-
 " ----- xolox/vim-easytags settings -----
 " Where to look for tags files
 "set tags=./tags;,~/.vimtags
@@ -323,16 +395,13 @@ let g:easytags_async = 1
 let g:easytags_dynamic_files = 2
 let g:easytags_resolve_links = 1
 let g:easytags_suppress_ctags_warning = 1
-let g:tagbar_width=20
-let g:miniBufExplUseSingleClick = 1
-
-
-
-"----- majutsushi/tagbar settings -----
+"let g:tagbar_width=20
+"let g:miniBufExplUseSingleClick = 1
+"----- preservim/tagbar settings -----
 "Open/close tagbar with \b
-nmap <silent> <leader>b :TagbarToggle<CR>
+"nmap <leader>t :TagbarToggle<CR>
 " Uncomment to open tagbar automatically whenever possible
-autocmd BufEnter * nested :call tagbar#autoopen(0)
+"autocmd BufEnter * nested :call tagbar#autoopen(0)
 " ----- Raimondi/delimitMate settings -----
 "let delimitMate_expand_cr = 1
 augroup mydelimitMate
@@ -362,8 +431,10 @@ fun! DelBlank()
 	%s/\n\{2,}/\r/e
 	normal gg=G
 endfun
-map <special> <leader>= :keepjumps call DelBlank()<cr>
+nnoremap <leader>= :keepjumps call DelBlank()<cr>
 "switch on line numbering
+"this is on so that toggling relative line numbering leaves
+"normal line numbering instead of removing it completely
 set nu
 "switch on relative line numbering
 "this leaves absolute line numbering on for the current line
@@ -374,10 +445,9 @@ fun! NumberToggle()
 endfunc
 nnoremap <C-n> :call NumberToggle()<cr>
 "toggle search highlighting
-noremap <leader>h :set hlsearch!<cr>
+"noremap <leader>h :set hlsearch!<cr>
 " To have NERDTree always open on startup
 "let g:nerdtree_tabs_open_on_console_startup=1
-
 "au VimEnter *  NERDTree
 "let NERDTreeShowBookmarks=1
 "let g:NERDTreeWinSize=25
@@ -395,19 +465,26 @@ set backupdir=~/.vim/backup//
 set dir=~/.vim/swap//
 set undodir=~/.vim/undo//
 cnoreabbrev CS tab drop ~/vim/cheatsheet.md <cr> :help<cr>
+"my diff function for two already open tabs
 fun! Diff(x, y)
 	execute 'tab sb' a:x
 	execute 'diffthis'
 	execute 'vert sb' a:y
 	execute 'diffthis'
 endfunc
+"
+"trying to highlight and tab files with
+"both html and php better
 "augroup filetypedetect
-""	au BufRead,BufNewFile *.php 
+""	au BufRead,BufNewFile *.php
 ""	if search('div')>0 |
 ""		set ft=phtml.html |
 ""	endif
 " augroup END
 "
 "
-"
-
+"navigate windows more easily
+nnoremap <tab>h <C-w>h
+nnoremap <tab>j <C-w>j
+nnoremap <tab>k <C-w>k
+nnoremap <tab>l <C-w>l
