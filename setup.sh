@@ -1,3 +1,5 @@
+sudo apt update
+sudo apt upgrade
 sudo apt install neovim
 sudo apt install universal-ctags
 sudo apt install git-flow
@@ -48,6 +50,7 @@ mkdir ~/.config/nvim/after/plugin/
 ln -s ~/vim/after.vim ~/.config/nvim/after/plugin/after.vim
 
 # install vim-plug
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 #open vim and run initial setup function
 nvim -c"call Setup()"
