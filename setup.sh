@@ -1,3 +1,4 @@
+sudo add-apt-repository ppa:neovim-ppa/stable
 sudo apt update
 sudo apt upgrade
 sudo apt install neovim
@@ -20,6 +21,10 @@ sudo pip install emoji-fzf
 
 # LSP support for vim files
 sudo npm install -g vim-language-server
+
+# intelephense LSP server for PHP
+sudo npm -g i intelephense
+
 
 # set FZF to use ripgrep
 # -m allows selectioon of multiple files
