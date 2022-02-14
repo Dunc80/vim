@@ -330,6 +330,9 @@ nnoremap <leader><Left> <C-w><<C-w><<C-w><<C-w><<C-w><
 nnoremap <leader><Right> <C-w>><C-w>><C-w>><C-w>><C-w>>
 
 nnoremap <leader>- :set list!<CR>
+
+" map backspace to go back to last buffer
+nnoremap <bs> <C-^>
 " allow the cursor to be in positions where there is no character
 set virtualedit=insert
 "vmap <unique> <up>    <Plug>SchleppUp
@@ -518,6 +521,9 @@ let g:fzf_colors =
             \ 'marker':  ['fg', 'Keyword'],
             \ 'spinner': ['fg', 'Label'],
             \ 'header':  ['fg', 'Comment'] }
+
+" map leader o to view outline, aka ctags in a fzf window
+nnoremap <leader>o :<C-u>CocFzfList outline<CR>
 " }}}
 " Vista.vim {{{
 nnoremap <leader>v :Vista!!<CR>
@@ -717,20 +723,15 @@ au filetype vimwiki silent! iunmap <buffer> <Tab>
 
 " Use `[g` and `]g` to navigate diagnostics
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
-nnoremap <silent> [g <Plug>(coc-diagnostic-prev)
-nnoremap <silent> ]g <Plug>(coc-diagnostic-next)
+nmap <silent> [g <plug>(coc-diagnostic-prev)
+nmap <silent> ]g <plug>(coc-diagnostic-next)
 
 " GoTo code navigation.
 " default mappings because coc-fzf uses them
-nnoremap <silent> gd <Plug>(coc-definition)
-nnoremap <silent> gy <Plug>(coc-type-definition)
-nnoremap <silent> gi <Plug>(coc-implementation)
-nnoremap <silent> gr <Plug>(coc-references)
-" maps I prefer
-nnoremap ch <Plug>(coc-definition)
-nnoremap cj <Plug>(coc-type-definition)
-nnoremap ck <Plug>(coc-implementation)
-nnoremap cl <Plug>(coc-references)
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
 
 " Use K to show documentation in preview window.
 nnoremap <silent> K :call <SID>show_documentation()<CR>

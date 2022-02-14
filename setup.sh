@@ -21,6 +21,10 @@ sudo pip install emoji-fzf
 # LSP support for vim files
 sudo npm install -g vim-language-server
 
+# intelephense LSP server for PHP
+sudo npm -g i intelephense
+
+
 # set FZF to use ripgrep
 # -m allows selectioon of multiple files
 grep -q 'export FZF_DEFAULT_COMMAND="rg --files"' ~/.bashrc \
