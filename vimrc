@@ -193,10 +193,10 @@ Plug 'ludovicchabant/vim-gutentags'
 " asynchronous lint engine
 "Plug 'dense-analysis/ale'
 
-""" coc
-
+" coc
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'antoinemadec/coc-fzf'
+
 " Already have tabnine as a source for asyncomplete
 " but this is the official plugin so I might try it instead
 " actually not using it, it works better through coc
@@ -837,7 +837,11 @@ endfunc
 
 " Shortcuts/Remaps {{{
 "Shortcuts for git
-nnoremap <leader>g :vertical Git<CR>:Twiggy<CR>
+
+" open fugitive and twiggy to show git status
+"nnoremap <leader>g :vertical Git<CR>:Twiggy<CR>
+" open git actions in FZF window
+nnoremap <leader>g :CocCommand fzf-preview.GitActions<CR>
 nnoremap <leader>d :Gvdiff<CR>:windo set foldmethod=manual<CR>
 
 "navigate windows more easily
@@ -882,7 +886,7 @@ cnoreabbrev setup call Setup()
 function! Setup()
     CocInstall coc-json coc-sh coc-css coc-html
                 \ coc-tsserver coc-markdownlint coc-phpls coc-pyright
-                \ coc-git coc-vimlsp
+                \ coc-git coc-vimlsp coc-fzf-preview
     "CocConfig
     "norm o{"diagnostic.displayByAle": true,}
     "w
