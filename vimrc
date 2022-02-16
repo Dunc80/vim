@@ -31,6 +31,8 @@ set incsearch
 set hlsearch
 syntax on
 set mouse=a
+" set leader as space
+let mapleader = " "
 "set tabstop=2
 "set shiftwidth=2
 set autoindent
@@ -258,6 +260,10 @@ Plug 'csch0/vim-startify-renderer-nerdfont'
 " debugger
 Plug 'vim-vdebug/vdebug'
 
+" TODOs in quickfix list
+Plug 'nvim-lua/plenary.nvim'
+Plug 'folke/todo-comments.nvim'
+
 " use nvim in browser text inputs
 " with the chrome extension
 if has('nvim')
@@ -288,6 +294,39 @@ Plug 'gcmt/taboo.vim'
 " All plugins must be added before the following line
 call plug#end()
 " }}}
+" QuickFix / Location List {{{
+
+" setup and settings for todo-comments plugin
+lua << EOF
+  require("todo-comments").setup {
+    -- your configuration comes here
+    -- or leave it empty to use the default settings
+    -- refer to the configuration section below
+  signs = true, -- show icons in the signs column
+  sign_priority = 20, -- sign priority
+  }
+EOF
+
+" my own override of a todo-comments function
+" it populates the quickfix list and DOESN'T open it
+lua << EOF
+function _G.todoqf()
+        require("todo-comments.search").search(function(results)
+      vim.fn.setqflist({}, " ", { title = "Todo", id = "$", items = results })
+  end, opts)
+end
+EOF
+
+nnoremap <leader>t :lua todoqf()<cr>:FzfLua quickfix<CR>
+nnoremap <leader>e :CocDiagnostics<cr>:lclose<cr>:FzfLua loclist<CR>
+nnoremap <leader>q :FzfLua quickfix<CR>
+nnoremap <leader>l :FzfLua loclist<CR>
+nnoremap ]q :cnext<cr>
+nnoremap [q :cprev<cr>
+nnoremap ]l :lnext<cr>
+nnoremap [l :lprev<cr>
+
+" }}}
 " More Settings {{{
 
 "disable plugin maps that slow down my own
@@ -306,8 +345,6 @@ colorscheme challenger_deep
 "colorscheme miamineon
 "colorscheme tokyonight
 set background=dark
-"set leader as space
-let mapleader = " "
 
 " open help windows in vertical split
 " on the left by default
@@ -458,12 +495,24 @@ augroup END
 " }}}
 " FZF {{{
 
-" open in splits and new tabs with Ctrl t/o/e
-" Tab/hOrizontal/vErtical
+" TODO: send results from FZF to quickfix
+"  I want a function to add FZF search results to quickfix list
+"  I copied this function from the FZF.Vim manual
+"  It doesn't work...
+    " An action can be a reference to a function that processes selected lines
+    function! s:build_quickfix_list(lines)
+      call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
+      copen
+      cc
+    endfunction
+
+" open in splits and new tabs with Ctrl t/o/e/q
+" Tab/hOrizontal/vErtical/Quickfix
 let g:fzf_action = {
             \ 'ctrl-t': 'tab split',
             \ 'ctrl-o': 'split',
-            \ 'ctrl-e': 'vsplit'
+            \ 'ctrl-e': 'vsplit',
+            \ 'ctrl-q': function('s:build_quickfix_list')
             \ }
 command! -bang -nargs=* GGrep
             \ call fzf#vim#grep(
@@ -483,12 +532,6 @@ nnoremap  <Leader>h :Helptags<CR>
 nnoremap  <Leader>r :History<CR>
 " search for my own mapped commands
 nnoremap  <Leader>m :Maps<CR>^<space
-" search for tags in the current buffer
-" `:Vista finder` also does a similar thing
-" but it doesn't seem to play well with coc
-" so I might change this map back to `:Vista finder`
-" if it is better in future
-nnoremap  <Leader>t :BTags<CR>
 " use ripgrep instead of grep by default in vim
 set grepprg=rg\ --vimgrep\ --smart-case\ --follow
 """""""""""""""""
@@ -524,19 +567,24 @@ let g:fzf_colors =
             \ 'spinner': ['fg', 'Label'],
             \ 'header':  ['fg', 'Comment'] }
 
-" map leader o to view outline, aka ctags in a fzf window
-nnoremap <leader>o :<C-u>CocFzfList outline<CR>
-nnoremap <leader>q :FzfLua quickfix<CR>
-nnoremap <leader>l :FzfLua loclist<CR>
 
 " }}}
-" Vista.vim {{{
+" Vista and tags stuff {{{
 nnoremap <leader>v :Vista!!<CR>
 "nnoremap <leader>t :Vista finder<CR>
 let g:vista_fzf_preview = ['right:50%']
 let g:vista_keep_fzf_colors = 1
 let g:vista_default_executive = 'coc'
 let g:vista_vimwiki_executive = 'markdown'
+
+" search for tags in the current buffer
+" `:Vista finder` also does a similar thing
+" but it doesn't seem to play well with coc
+" so I might change this map back to `:Vista finder`
+" if it is better in future
+" nnoremap  <Leader>o :BTags<CR>
+" map leader o to view outline, aka ctags in a fzf window
+nnoremap <leader>o :<C-u>CocFzfList outline<CR>
 
 " }}}
 " lsp-vim {{{
@@ -715,7 +763,7 @@ if has("nvim-0.5.0") || has("patch-8.1.1564")
     " Recently vim can merge signcolumn and number column into one
     "set signcolumn=number
     " but I don't like it, so:
-    set signcolumn=yes
+    set signcolumn=auto:4
 else
     set signcolumn=yes
 endif
@@ -969,3 +1017,7 @@ function! HtmlToMarkdown()
     %s/(\(https\?:\)\?\/\/\(w\{3}\.\)\?clojure\.cz\(\/.\{-}\)\.html)/(\3\/)/cg
 endfunction
 
+" this has to be loaded after plugins, and it is
+" it is also called here so its settings are persistent after
+" re-sourcing this file i.e `:so %`
+call Colors()
