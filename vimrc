@@ -220,6 +220,8 @@ Plug 'vim-scripts/HTML-AutoCloseTag'
 " FZF fuzzy file search
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+" use for openeing quickfix and location list in FZF
+Plug 'ibhagwan/fzf-lua'
 " Plug 'LumaKernel/fern-mapping-fzf.vim'
 
 " shows colors of hex codes
@@ -524,6 +526,9 @@ let g:fzf_colors =
 
 " map leader o to view outline, aka ctags in a fzf window
 nnoremap <leader>o :<C-u>CocFzfList outline<CR>
+nnoremap <leader>q :FzfLua quickfix<CR>
+nnoremap <leader>l :FzfLua loclist<CR>
+
 " }}}
 " Vista.vim {{{
 nnoremap <leader>v :Vista!!<CR>
@@ -728,10 +733,10 @@ nmap <silent> ]g <plug>(coc-diagnostic-next)
 
 " GoTo code navigation.
 " default mappings because coc-fzf uses them
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
+nmap gd <Plug>(coc-definition)
+nmap gy <Plug>(coc-type-definition)
+nmap gi <Plug>(coc-implementation)
+nmap gr <Plug>(coc-references)
 
 " Use K to show documentation in preview window.
 nnoremap <silent> K :call <SID>show_documentation()<CR>
@@ -750,7 +755,6 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 "nnoremap <leader>rn <Plug>(coc-rename)
 """"" coc-fzf
 nnoremap <leader>c <C-u>:CocFzfList<CR>
-vnoremap <leader>c <C-u>:CocFzfList<CR>
 let g:coc_fzf_preview = 'right:50%'
 let g:coc_fzf_opts = []
 " let coc treat vimwiki files as md
@@ -886,7 +890,7 @@ cnoreabbrev setup call Setup()
 function! Setup()
     CocInstall coc-json coc-sh coc-css coc-html
                 \ coc-tsserver coc-markdownlint coc-phpls coc-pyright
-                \ coc-git coc-vimlsp coc-fzf-preview
+                \ coc-git coc-vimlsp coc-fzf-preview @yaegassy/coc-intelephense
     "CocConfig
     "norm o{"diagnostic.displayByAle": true,}
     "w
