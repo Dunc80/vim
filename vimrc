@@ -326,6 +326,18 @@ nnoremap [q :cprev<cr>
 nnoremap ]l :lnext<cr>
 nnoremap [l :lprev<cr>
 
+" navigate chunks of current buffer
+nmap [c <Plug>(coc-git-prevchunk)
+nmap ]c <Plug>(coc-git-nextchunk)
+
+" create text object for git chunks
+omap ic <Plug>(coc-git-chunk-inner)
+xmap ic <Plug>(coc-git-chunk-inner)
+omap ac <Plug>(coc-git-chunk-outer)
+xmap ac <Plug>(coc-git-chunk-outer)
+
+nnoremap dp :CocCommand git.chunkStage<cr>
+
 " }}}
 " More Settings {{{
 
