@@ -266,7 +266,6 @@ Plug 'folke/todo-comments.nvim'
 
 " smooth scrolling
 Plug 'karb94/neoscroll.nvim'
-lua require('neoscroll').setup()
 
 " use nvim in browser text inputs
 " with the chrome extension
@@ -297,6 +296,8 @@ Plug 'gcmt/taboo.vim'
 
 " All plugins must be added before the following line
 call plug#end()
+
+lua require('neoscroll').setup()
 " }}}
 " QuickFix / Location List {{{
 
