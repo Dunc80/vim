@@ -38,9 +38,9 @@ let mapleader = " "
 set autoindent
 set smartindent
 " start scrolling the text when
-" the cursor is 10 lines
+" the cursor is 5 lines
 " from the top or bottom of the screen
-set scrolloff=10
+set scrolloff=5
 "let php_sql_query = 1
 "let php_htmlInStrings = 1
 " set list of characters to represent blank characters
@@ -263,6 +263,10 @@ Plug 'vim-vdebug/vdebug'
 " TODOs in quickfix list
 Plug 'nvim-lua/plenary.nvim'
 Plug 'folke/todo-comments.nvim'
+
+" smooth scrolling
+Plug 'karb94/neoscroll.nvim'
+lua require('neoscroll').setup()
 
 " use nvim in browser text inputs
 " with the chrome extension
