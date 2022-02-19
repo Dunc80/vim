@@ -322,7 +322,8 @@ function _G.todoqf()
 end
 EOF
 
-nnoremap <leader>t :lua todoqf()<cr>:FzfLua quickfix<CR>
+nnoremap <leader>t :lua todoqf()<cr> 
+
 nnoremap <leader>e :CocDiagnostics<cr>:lclose<cr>:FzfLua loclist<CR>
 nnoremap <leader>q :FzfLua quickfix<CR>
 nnoremap <leader>l :FzfLua loclist<CR>
@@ -341,7 +342,7 @@ xmap ic <Plug>(coc-git-chunk-inner)
 omap ac <Plug>(coc-git-chunk-outer)
 xmap ac <Plug>(coc-git-chunk-outer)
 
-nnoremap dp :CocCommand git.chunkStage<cr>
+nnoremap <expr> dp &diff ? 'dp' : ':CocCommand git.chunkStage<cr>'
 
 " }}}
 " More Settings {{{
@@ -374,6 +375,8 @@ let g:indent_guides_default_mapping = 0
 let g:indent_guides_start_level=2
 let g:indent_guides_guide_size=1
 let g:indent_guides_exclude_filetypes = ['help', 'startify', 'tagbar', 'vista', 'vista_markdown']
+
+autocmd FileType php setlocal commentstring=//\ %s
 
 " antoinemadec/FixCursorHold.nvim setting
 " in millisecond, used for both CursorHold and CursorHoldI,
