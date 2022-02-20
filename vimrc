@@ -15,6 +15,13 @@
 " navigate this file with folding
 " `zm` to close all folds by one level
 " `l` open current fold
+"
+"
+" TODO: make a list of all my FZF maps
+" install telescope and replace every FZF
+" map with an equivalent telescope map
+" make a map to load telescope results into
+" quickfix list
 
 " General settings {{{
 
