@@ -25,6 +25,9 @@ sudo npm install -g vim-language-server
 # intelephense LSP server for PHP
 sudo npm -g i intelephense
 
+# pandoc to convert markdown to pdf
+sudo apt install pandoc
+sudo apt install texlive-xetex
 
 # set FZF to use ripgrep
 # -m allows selectioon of multiple files
@@ -54,6 +57,8 @@ mv ~/.config/nvim/init.vim ~/.config/nvim/init.vim.backup
 # make a soft link to this file
 mkdir ~/.config/nvim/
 ln -s ~/vim/vimrc ~/.config/nvim/init.vim
+mv ~/.config/nvim/coc-settings.json ~/.config/nvim/coc-settings.json.backup
+ln -s ~/vim/coc-settings.json ~/.config/nvim/coc-settings.json
 #mkdir ~/.vim/swap/
 #mkdir ~/.vim/undo/
 #mkdir ~/.vim/backup/
