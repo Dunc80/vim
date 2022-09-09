@@ -31,14 +31,16 @@ set incsearch
 set hlsearch
 syntax on
 set mouse=a
+" set leader as space
+let mapleader = " "
 "set tabstop=2
 "set shiftwidth=2
 set autoindent
 set smartindent
 " start scrolling the text when
-" the cursor is 10 lines
+" the cursor is 5 lines
 " from the top or bottom of the screen
-set scrolloff=10
+set scrolloff=5
 "let php_sql_query = 1
 "let php_htmlInStrings = 1
 " set list of characters to represent blank characters
@@ -95,6 +97,8 @@ call plug#begin()
 " This will include the help
 " files for vim-plug itself
 Plug 'junegunn/vim-plug'
+" github co-pilot
+Plug 'github/copilot.vim'
 " Git stuff
 " git automation
 Plug 'tpope/vim-fugitive'
@@ -155,7 +159,7 @@ Plug 'lambdalisue/glyph-palette.vim'
 Plug 'lambdalisue/fern-renderer-nerdfont.vim'
 Plug 'lambdalisue/fern-git-status.vim'
 "Plug 'lambdalisue/fern-hijack.vim'
-" a preview window for fern, but it doesn;t work in nvim
+" a preview window for fern
 Plug 'yuki-yano/fern-preview.vim'
 "Plug 'kat0h/fern-preview.vim'
 
@@ -220,6 +224,8 @@ Plug 'vim-scripts/HTML-AutoCloseTag'
 " FZF fuzzy file search
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+" use for openeing quickfix and location list in FZF
+Plug 'ibhagwan/fzf-lua'
 " Plug 'LumaKernel/fern-mapping-fzf.vim'
 
 " shows colors of hex codes
@@ -238,13 +244,13 @@ Plug 'wakatime/vim-wakatime'
 " edit subtitles files
 Plug 'ggandor/vim-srt-sync'
 
+" VimWiki
+Plug 'vimwiki/vimwiki'
+
 " these two work together to display markdown files
 " with folding and toc
 Plug 'godlygeek/tabular'
-Plug 'plasticboy/vim-markdown'
-
-" VimWiki
-Plug 'vimwiki/vimwiki'
+Plug 'preservim/vim-markdown'
 
 " peekaboo registers helpers
 Plug 'junegunn/vim-peekaboo'
@@ -256,11 +262,22 @@ Plug 'csch0/vim-startify-renderer-nerdfont'
 " debugger
 Plug 'vim-vdebug/vdebug'
 
+" TODOs in quickfix list
+Plug 'nvim-lua/plenary.nvim'
+Plug 'folke/todo-comments.nvim'
+
+" smooth scrolling
+Plug 'karb94/neoscroll.nvim'
+
 " use nvim in browser text inputs
 " with the chrome extension
 if has('nvim')
     Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 endif
+
+" pandoc integration
+Plug 'vim-pandoc/vim-pandoc'
+Plug 'vim-pandoc/vim-pandoc-syntax'
 
 """ Colour schemes
 Plug 'drewtempelmeyer/palenight.vim'
@@ -285,6 +302,83 @@ Plug 'gcmt/taboo.vim'
 
 " All plugins must be added before the following line
 call plug#end()
+
+lua require('neoscroll').setup()
+" }}}
+" QuickFix / Location List {{{
+
+" setup and settings for todo-comments plugin
+lua << EOF
+  require("todo-comments").setup {
+    -- your configuration comes here
+    -- or leave it empty to use the default settings
+    -- refer to the configuration section below
+  signs = true, -- show icons in the signs column
+  sign_priority = 20, -- sign priority
+  }
+EOF
+
+" my own override of a todo-comments function
+" it populates the quickfix list and DOESN'T open it
+lua << EOF
+function _G.todoqf()
+        require("todo-comments.search").search(function(results)
+      vim.fn.setqflist({}, " ", { title = "Todo", id = "$", items = results })
+  end, opts)
+end
+EOF
+
+function! PopulateQf()
+lua << EOF
+        require("todo-comments.search").search(function(results)
+      vim.fn.setqflist({}, " ", { title = "Todo", id = "$", items = results })
+  end, opts)
+EOF
+endfunction
+
+
+" populate location list with diagnostics from coc, then open it with fzf
+nnoremap <leader>e :CocDiagnostics<cr>:lclose<cr>:FzfLua loclist<CR>
+" populate quickfix list with todo items from todo-comments plugin then open it with fzf
+" nnoremap <leader>q :lua todoqf()<cr>
+nnoremap <leader>q :call PopulateQf()<CR>
+            \ :sleep 20m<cr>
+            \ :FzfLua quickfix<CR>
+" open location list with fzf
+nnoremap <leader>l :FzfLua loclist<CR>
+nnoremap ]q :cnext<cr>
+nnoremap [q :cprev<cr>
+nnoremap ]l :lnext<cr>
+nnoremap [l :lprev<cr>
+
+" navigate chunks of current buffer
+nmap [c <Plug>(coc-git-prevchunk)
+nmap ]c <Plug>(coc-git-nextchunk)
+
+" create text object for git chunks
+omap ic <Plug>(coc-git-chunk-inner)
+xmap ic <Plug>(coc-git-chunk-inner)
+omap ac <Plug>(coc-git-chunk-outer)
+xmap ac <Plug>(coc-git-chunk-outer)
+
+nnoremap <expr> dp &diff ? 'dp' : ':CocCommand git.chunkStage<cr>'
+
+" navigate jumplist
+nnoremap <leader>] <C-I>
+nnoremap <leader>[ <C-O>
+
+nnoremap ]<space> <C-I>
+nnoremap [<space> <C-O>
+
+
+if has('nvim')
+" open terminal mode in new split with <leader>t
+nnoremap <leader>t :split<CR>:term<CR>A
+" exit terminal mode with <C-[>
+tnoremap <C-[> <C-\><C-n>
+endif
+
+
 " }}}
 " More Settings {{{
 
@@ -304,8 +398,6 @@ colorscheme challenger_deep
 "colorscheme miamineon
 "colorscheme tokyonight
 set background=dark
-"set leader as space
-let mapleader = " "
 
 " open help windows in vertical split
 " on the left by default
@@ -319,15 +411,17 @@ let g:indent_guides_start_level=2
 let g:indent_guides_guide_size=1
 let g:indent_guides_exclude_filetypes = ['help', 'startify', 'tagbar', 'vista', 'vista_markdown']
 
+autocmd FileType php setlocal commentstring=//\ %s
+
 " antoinemadec/FixCursorHold.nvim setting
 " in millisecond, used for both CursorHold and CursorHoldI,
 " use updatetime instead if not defined
 let g:cursorhold_updatetime = 100
 
-nnoremap <leader><Up> <C-w>+<C-w>+<C-w>+<C-w>+<C-w>+
-nnoremap <leader><Down> <C-w>-<C-w>-<C-w>-<C-w>-<C-w>-
-nnoremap <leader><Left> <C-w><<C-w><<C-w><<C-w><<C-w><
-nnoremap <leader><Right> <C-w>><C-w>><C-w>><C-w>><C-w>>
+nnoremap <tab><Up> <C-w>+<C-w>+<C-w>+<C-w>+<C-w>+
+nnoremap <tab><Down> <C-w>-<C-w>-<C-w>-<C-w>-<C-w>-
+nnoremap <tab><Left> <C-w><<C-w><<C-w><<C-w><<C-w><
+nnoremap <tab><Right> <C-w>><C-w>><C-w>><C-w>><C-w>>
 
 nnoremap <leader>- :set list!<CR>
 
@@ -376,13 +470,14 @@ let g:startify_lists = [
 let g:fern#renderer = "nerdfont"
 "let g:fern#disable_default_mappings = 1
 "toggle fern with <leader> f
-noremap <Leader>f :Fern . -drawer -width=30 -reveal=% -toggle <CR>
+nnoremap <Leader>f :Fern . -reveal=% -drawer -width=30 -toggle <CR>
 ""<C-w>=
 "Start fern.vim on Vim startup with current directory
 ""augroup my-fern-startup
 ""	autocmd! *
 ""	autocmd VimEnter * ++nested Fern -drawer -toggle -reveal=% -width=25 .
 ""augroup END
+
 "custom mappings
 function! FernInit() abort
     nmap <buffer><expr>
@@ -394,9 +489,7 @@ function! FernInit() abort
                 \ )
     nmap <buffer> <CR> <Plug>(fern-my-open-expand-collapse)
     nmap <buffer> <2-LeftMouse> <Plug>(fern-my-open-expand-collapse)
-    nmap <buffer> n <Plug>(fern-action-new-path)
-    nmap <buffer> m <Plug>(fern-action-move)
-    nmap <buffer> M <Plug>(fern-action-rename)
+    nmap <buffer> N <Plug>(fern-action-new-path)
     nmap <buffer> r <Plug>(fern-action-reload)
     nmap <buffer> <C-o> <Plug>(fern-action-open:split)
     nmap <buffer> <C-e> <Plug>(fern-action-open:vsplit)
@@ -412,11 +505,20 @@ function! FernInit() abort
                 \ <Plug>(fern-action-tcd:root)
     nmap <buffer> > <Plug>(fern-my-enter-and-tcd)
     nmap <buffer> < <Plug>(fern-my-leave-and-tcd)
-    ""nmap <buffer> p     <Plug>(fern-action-preview:toggle)
+    " nmap <buffer> p     <Plug>(fern-action-preview:toggle)
     ""nmap <buffer> <C-p> <Plug>(fern-action-preview:auto:toggle)
     ""nmap <buffer> <C-d> <Plug>(fern-action-preview:scroll:down:half)
     ""nmap <buffer> <C-u> <Plug>(fern-action-preview:scroll:up:half)
+    " Use 'select' instead of 'edit' for default 'open' action
+    nmap <buffer> <Plug>(fern-action-open) <Plug>(fern-action-open:select)
+    nmap <silent> <buffer> p <Plug>(fern-action-preview:auto:toggle)
+    " nmap <buffer> mi <Plug>(fern-action-rename):call MoveToIdeas()
+    nmap <buffer> U <Plug>(fern-action-rename)aUnsorted/<ESC>:w<CR>
+    nmap <buffer> J <Plug>(fern-action-rename)aJokes/<ESC>:w<CR>
+    " nmap <buffer> m :Maps<CR>init.vim fern-action-rename m
+    " nmap <buffer> m <Plug>(fern-action-move)
 endfunction
+
 augroup FernGroup
     autocmd!
     autocmd FileType fern call FernInit()
@@ -428,40 +530,57 @@ augroup my-glyph-palette
     autocmd FileType nerdtree,startify call glyph_palette#apply()
 augroup END
 
-function! s:fern_settings() abort
-    nmap <silent> <buffer> <expr> <Plug>(fern-quit-or-close-preview) fern_preview#smart_preview("\<Plug>(fern-action-preview:close)", ":q\<CR>")
-    nmap <silent> <buffer> q <Plug>(fern-quit-or-close-preview)
-endfunction
+" function! s:fern_settings() abort
+"     nmap <silent> <buffer> <expr> <Plug>(fern-quit-or-close-preview) fern_preview#smart_preview("\<Plug>(fern-action-preview:close)", ":q\<CR>")
+"     nmap <silent> <buffer> q <Plug>(fern-quit-or-close-preview)
+" endfunction
 ""
-"make fern preview window 50% width
-"if !has('nvim')
-"function! fern_preview#width_default_func() abort
-"let width = float2nr(&columns * 0.5)
-"return width
-"endfunction
-"endif
 
-function! s:fern_settings() abort
-    nmap <silent> <buffer> p     <Plug>(fern-action-preview:toggle)
-    nmap <silent> <buffer> <C-p> <Plug>(fern-action-preview:auto:toggle)
-    nmap <silent> <buffer> <C-d> <Plug>(fern-action-preview:scroll:down:half)
-    nmap <silent> <buffer> <C-u> <Plug>(fern-action-preview:scroll:up:half)
-endfunction
+" this should be in the fern preview source code but it's not
+" getting set, so I added it here to avoid an error message
+ if !exists('g:fern_preview_window_highlight')
+   if has('nvim')
+     let g:fern_preview_window_highlight = 'NormalFloat:Normal'
+   else
+     let g:fern_preview_window_highlight = 'Normal'
+   endif
+ endif
+"
 
-augroup fern-settings
-    autocmd!
-    autocmd FileType fern call s:fern_settings()
-augroup END
+" function! s:fern_settings() abort
+"     nmap <silent> <buffer> p     <Plug>(fern-action-preview:toggle)
+"     nmap <silent> <buffer> <C-p> <Plug>(fern-action-preview:auto:toggle)
+"     nmap <silent> <buffer> <C-d> <Plug>(fern-action-preview:scroll:down:half)
+"     nmap <silent> <buffer> <C-u> <Plug>(fern-action-preview:scroll:up:half)
+" endfunction
+
+" augroup fern-settings
+"     autocmd!
+"     autocmd FileType fern call s:fern_settings()
+" augroup END
 
 " }}}
+
 " FZF {{{
 
-" open in splits and new tabs with Ctrl t/o/e
-" Tab/hOrizontal/vErtical
+" TODO: send results from FZF to quickfix
+"  I want a function to add FZF search results to quickfix list
+"  I copied this function from the FZF.Vim manual
+"  It doesn't work...
+    " An action can be a reference to a function that processes selected lines
+    function! s:build_quickfix_list(lines)
+      call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
+      copen
+      cc
+    endfunction
+
+" open in splits and new tabs with Ctrl t/o/e/q
+" Tab/hOrizontal/vErtical/Quickfix
 let g:fzf_action = {
             \ 'ctrl-t': 'tab split',
             \ 'ctrl-o': 'split',
-            \ 'ctrl-e': 'vsplit'
+            \ 'ctrl-e': 'vsplit',
+            \ 'ctrl-q': function('s:build_quickfix_list')
             \ }
 command! -bang -nargs=* GGrep
             \ call fzf#vim#grep(
@@ -481,12 +600,6 @@ nnoremap  <Leader>h :Helptags<CR>
 nnoremap  <Leader>r :History<CR>
 " search for my own mapped commands
 nnoremap  <Leader>m :Maps<CR>^<space
-" search for tags in the current buffer
-" `:Vista finder` also does a similar thing
-" but it doesn't seem to play well with coc
-" so I might change this map back to `:Vista finder`
-" if it is better in future
-nnoremap  <Leader>t :BTags<CR>
 " use ripgrep instead of grep by default in vim
 set grepprg=rg\ --vimgrep\ --smart-case\ --follow
 """""""""""""""""
@@ -522,16 +635,26 @@ let g:fzf_colors =
             \ 'spinner': ['fg', 'Label'],
             \ 'header':  ['fg', 'Comment'] }
 
-" map leader o to view outline, aka ctags in a fzf window
-nnoremap <leader>o :<C-u>CocFzfList outline<CR>
+
 " }}}
-" Vista.vim {{{
+" Vista and tags stuff {{{
 nnoremap <leader>v :Vista!!<CR>
 "nnoremap <leader>t :Vista finder<CR>
 let g:vista_fzf_preview = ['right:50%']
 let g:vista_keep_fzf_colors = 1
 let g:vista_default_executive = 'coc'
 let g:vista_vimwiki_executive = 'markdown'
+" let g:vista#executives = ['ale', 'coc', 'ctags', 'lcn', 'nvim_lsp', 'vim_lsc', 'vim_lsp', 'markdown']
+    " let g:vista#extensions = ['markdown', 'rst']
+
+" search for tags in the current buffer
+" `:Vista finder` also does a similar thing
+" but it doesn't seem to play well with coc
+" so I might change this map back to `:Vista finder`
+" if it is better in future
+" nnoremap  <Leader>o :BTags<CR>
+" map leader o to view outline, aka ctags in a fzf window
+nnoremap <leader>o :Vista finder coc<CR>
 
 " }}}
 " lsp-vim {{{
@@ -671,7 +794,9 @@ let g:vimwiki_key_mappings = { 'headers': 0,
 " nnoremap <buffer> <C-t> <Plug>VimwikiTabnewLink
 "nnoremap <buffer> <leader><Backspace> <Plug>VimwikiGoBackLink
 
-nnoremap <leader>w :VimwikiTabIndex<CR>:tcd %:p:h<CR>:TabooRename Vimwiki Notes<CR>
+nnoremap <leader>w :VimwikiTabIndex<CR>:tcd %:p:h<CR>:TabooRename Vimwiki Notes<CR>:tabm 0<CR>
+
+let g:vimwiki_folding = 'custom'
 
 ""command! -nargs=1 N call NewNote(<args>)
 ""function NewNote()
@@ -710,7 +835,7 @@ if has("nvim-0.5.0") || has("patch-8.1.1564")
     " Recently vim can merge signcolumn and number column into one
     "set signcolumn=number
     " but I don't like it, so:
-    set signcolumn=yes
+    set signcolumn=auto:4
 else
     set signcolumn=yes
 endif
@@ -728,10 +853,10 @@ nmap <silent> ]g <plug>(coc-diagnostic-next)
 
 " GoTo code navigation.
 " default mappings because coc-fzf uses them
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
+nmap gd <Plug>(coc-definition)
+nmap gy <Plug>(coc-type-definition)
+nmap gi <Plug>(coc-implementation)
+nmap gr <Plug>(coc-references)
 
 " Use K to show documentation in preview window.
 nnoremap <silent> K :call <SID>show_documentation()<CR>
@@ -750,7 +875,6 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 "nnoremap <leader>rn <Plug>(coc-rename)
 """"" coc-fzf
 nnoremap <leader>c <C-u>:CocFzfList<CR>
-vnoremap <leader>c <C-u>:CocFzfList<CR>
 let g:coc_fzf_preview = 'right:50%'
 let g:coc_fzf_opts = []
 " let coc treat vimwiki files as md
@@ -812,9 +936,10 @@ set nu
 " this leaves absolute line numbering on for the current line
 set rnu
 " function to toggle the relative line numbering
-fun! NumberToggle()
+function! NumberToggle() abort
     set rnu!
-endfunc
+endfunction
+
 nnoremap <leader>n :call NumberToggle()<cr>
 " }}}
 "my diff function for two already open tabs {{{
@@ -824,6 +949,23 @@ fun! Diff(x, y)
     execute 'vert sb' a:y
     execute 'diffthis'
 endfunc
+" }}}
+" yanked text fills registers 0-9 {{{
+function! SaveLastReg()
+    if v:event['regname']==""
+        if v:event['operator']=='y'
+            for i in range(8,1,-1)
+                exe "let @".string(i+1)." = @". string(i) 
+            endfor
+            if exists("g:last_yank")
+                let @1=g:last_yank
+            endif
+            let g:last_yank=@"
+        endif 
+    endif
+endfunction 
+
+autocmd TextYankPost * call SaveLastReg()
 " }}}
 
 "trying to highlight and indent files with
@@ -864,6 +1006,7 @@ function! Colors()
     highlight DiffDelete ctermfg=196 ctermbg=NONE guifg=#ff0000 guibg=NONE
     highlight DiffText ctermfg=NONE ctermbg=022 guifg=NONE guibg=#005f00
     hi ColorColumn ctermbg=250 guibg=#ff8655
+    highlight! link CopilotSuggestion Special
 endfunction
 
 " }}}
@@ -876,13 +1019,18 @@ function! After()
     "disable plugin maps that slow down my own
     unmap <Leader>swp
     unmap <Leader>rwp
+
+function! fern_preview#width_default_func() abort
+let width = float2nr(&columns * 0.5)
+return width
+endfunction
 endfunction
 " }}}
 " Setup {{{
 " This is a first time setup function
 " to install/configure LSP servers
 " and dependencies etcetera.
-cnoreabbrev setup call Setup()
+cnoreabbrev duncansVimSetup call Setup()
 function! Setup()
     CocInstall coc-json coc-sh coc-css coc-html
                 \ coc-tsserver coc-markdownlint coc-phpls coc-pyright
@@ -904,7 +1052,7 @@ endfunction
 " }}}
 " vim:fdm=marker
 
-cnoreabbrev htm call HtmlToMarkdown()
+" cnoreabbrev htm call HtmlToMarkdown()
 function! HtmlToMarkdown()
     " -------------------
     " Generic markdownify
@@ -965,3 +1113,7 @@ function! HtmlToMarkdown()
     %s/(\(https\?:\)\?\/\/\(w\{3}\.\)\?clojure\.cz\(\/.\{-}\)\.html)/(\3\/)/cg
 endfunction
 
+" this has to be loaded after plugins, and it is
+" it is also called here so its settings are persistent after
+" re-sourcing this file i.e `:so %`
+call Colors()
