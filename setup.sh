@@ -29,6 +29,13 @@ sudo npm -g i intelephense
 sudo apt install pandoc
 sudo apt install texlive-xetex
 
+# install go
+sudo apt install golang
+
+# install nodejs 14
+curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+sudo apt install nodejs
+
 # set FZF to use ripgrep
 # -m allows selectioon of multiple files
 grep -q 'export FZF_DEFAULT_COMMAND="rg --files"' ~/.bashrc \
