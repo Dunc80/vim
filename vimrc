@@ -15,6 +15,21 @@
 " navigate this file with folding
 " `zm` to close all folds by one level
 " `l` open current fold
+"
+" TODO: tidy all code
+"   remove code that is commented out
+"   make sections tidier
+"   remove unused code
+"   remove code that is not needed
+" TODO: git commit
+"   stage all changes
+"   commit
+" TODO: merge to master branch
+"   start release branch
+"   finish release branch
+"   push
+"   pull to vps
+"   pull to pi
 
 " General settings {{{
 
@@ -200,6 +215,15 @@ Plug 'ludovicchabant/vim-gutentags'
 " coc
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'antoinemadec/coc-fzf'
+" read and write files with sudo
+Plug 'lambdalisue/suda.vim'
+" window management
+" Plug 'anuvyklack/middleclass'
+" Plug 'anuvyklack/animation.nvim'
+" Plug 'anuvyklack/windows.nvim'
+" tmux window shortcuts
+" Plug 'christoomey/vim-tmux-navigator'
+" Close all buffers that are not open in any tabs or windows
 
 " Already have tabnine as a source for asyncomplete
 " but this is the official plugin so I might try it instead
@@ -216,7 +240,7 @@ Plug 'preservim/tagbar'
 Plug 'liuchengxu/vista.vim'
 
 " automatic closing of quotes, parentheses etc
-Plug 'Raimondi/delimitMate'
+"Plug 'Raimondi/delimitMate'
 
 " autocloses html tags
 Plug 'vim-scripts/HTML-AutoCloseTag'
@@ -226,7 +250,17 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 " use for openeing quickfix and location list in FZF
 Plug 'ibhagwan/fzf-lua'
-" Plug 'LumaKernel/fern-mapping-fzf.vim'
+
+" telescope fuzzy search
+Plug 'nvim-telescope/telescope.nvim', { 'branch': '0.1.x' }
+Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'kyazdani42/nvim-web-devicons'
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
+Plug 'BurntSushi/ripgrep'
+Plug 'fannheyward/telescope-coc.nvim'
+Plug 'xiyaowong/telescope-emoji.nvim'
+Plug 'nvim-telescope/telescope-symbols.nvim'
+Plug 'olacin/telescope-gitmoji.nvim'
 
 " shows colors of hex codes
 "Plug 'lilydjwg/colorizer'
@@ -304,52 +338,46 @@ Plug 'gcmt/taboo.vim'
 call plug#end()
 
 lua require('neoscroll').setup()
-" }}}
-" QuickFix / Location List {{{
-
-" setup and settings for todo-comments plugin
 lua << EOF
-  require("todo-comments").setup {
+require("telescope").setup({
+extensions = {
+    coc = {
+        theme = 'ivy',
+        prefer_locations = true, -- always use Telescope locations to preview definitions/declarations/implementations etc
+        },
+    emoji = {
+        action = function(emoji)
+        -- argument emoji is a table.
+        -- {name="", value="", cagegory="", description=""}
+
+        --   vim.fn.setreg("*", emoji.value)
+        --  print([[Press p or "*p to paste this emoji]] .. emoji.value)
+
+        -- insert emoji when picked
+        vim.api.nvim_put({ emoji.value }, 'c', false, true)
+        end,
+        },
+    },
+})
+require('telescope').load_extension('coc')
+require("telescope").load_extension("emoji")
+require('telescope').load_extension("gitmoji")
+
+EOF
+
+    " }}}
+    " QuickFix / Location List {{{
+
+    " setup and settings for todo-comments plugin
+    lua << EOF
+    require("todo-comments").setup {
     -- your configuration comes here
     -- or leave it empty to use the default settings
     -- refer to the configuration section below
-  signs = true, -- show icons in the signs column
-  sign_priority = 20, -- sign priority
-  }
+    signs = true, -- show icons in the signs column
+    sign_priority = 20, -- sign priority
+    }
 EOF
-
-" my own override of a todo-comments function
-" it populates the quickfix list and DOESN'T open it
-lua << EOF
-function _G.todoqf()
-        require("todo-comments.search").search(function(results)
-      vim.fn.setqflist({}, " ", { title = "Todo", id = "$", items = results })
-  end, opts)
-end
-EOF
-
-function! PopulateQf()
-lua << EOF
-        require("todo-comments.search").search(function(results)
-      vim.fn.setqflist({}, " ", { title = "Todo", id = "$", items = results })
-  end, opts)
-EOF
-endfunction
-
-
-" populate location list with diagnostics from coc, then open it with fzf
-nnoremap <leader>e :CocDiagnostics<cr>:lclose<cr>:FzfLua loclist<CR>
-" populate quickfix list with todo items from todo-comments plugin then open it with fzf
-" nnoremap <leader>q :lua todoqf()<cr>
-nnoremap <leader>q :call PopulateQf()<CR>
-            \ :sleep 20m<cr>
-            \ :FzfLua quickfix<CR>
-" open location list with fzf
-nnoremap <leader>l :FzfLua loclist<CR>
-nnoremap ]q :cnext<cr>
-nnoremap [q :cprev<cr>
-nnoremap ]l :lnext<cr>
-nnoremap [l :lprev<cr>
 
 " navigate chunks of current buffer
 nmap [c <Plug>(coc-git-prevchunk)
@@ -364,20 +392,31 @@ xmap ac <Plug>(coc-git-chunk-outer)
 nnoremap <expr> dp &diff ? 'dp' : ':CocCommand git.chunkStage<cr>'
 
 " navigate jumplist
-nnoremap <leader>] <C-I>
-nnoremap <leader>[ <C-O>
+nnoremap <leader>j :Telescope jumplist<cr>
+nnoremap ]j <C-I>
+nnoremap [j <C-O>
 
-nnoremap ]<space> <C-I>
-nnoremap [<space> <C-O>
+" navigate quickfix list
+nnoremap <leader>q :Telescope quickfix<cr>
+nnoremap ]q :cnext<cr>
+nnoremap [q :cprev<cr>
 
+" navigate location list
+nnoremap <leader>l :Telescope loclist<cr>
+nnoremap ]l :lnext<cr>
+nnoremap [l :lprev<cr>
+
+" open todo list in telescope with leader t
+nnoremap <leader>t :TodoTelescope<CR>
+
+"navigate todo list
 
 if has('nvim')
-" open terminal mode in new split with <leader>t
-nnoremap <leader>t :split<CR>:term<CR>A
-" exit terminal mode with <C-[>
-tnoremap <C-[> <C-\><C-n>
+    " open terminal mode in new split with <leader>k
+    nnoremap <leader>k :split<CR>:term<CR>A
+    " exit terminal mode with <C-[>
+    tnoremap <C-[> <C-\><C-n>
 endif
-
 
 " }}}
 " More Settings {{{
@@ -402,6 +441,13 @@ set background=dark
 " open help windows in vertical split
 " on the left by default
 " autocmd FileType help wincmd H
+
+augroup bufenter
+    autocmd!
+    " if the file is not contained in the working directory
+    " then change the working directory to the file's directory
+    autocmd BufEnter * if expand('%:p') !~# getcwd() | lcd %:p:h | endif
+augroup END
 
 autocmd FileType markdown set conceallevel=3
 set foldmethod=marker
@@ -457,8 +503,12 @@ let g:ascii = [
             \"|_____/ \\__,_|_| |_|\\___\\__,_|_| |_| |___/     \\/   |_|_| |_| |_|",
             \""
             \]
+" get nvim version number
+let g:version = system('nvim --version | head -n 1 | cut -d " " -f 2')
+" remove trailing newline
+let g:version = substitute(g:version, '\n\+$', '', '')
 let g:startify_custom_header =
-            \ 'startify#pad(g:ascii + startify#fortune#boxed())'
+            \ 'startify#pad(g:ascii + ["nvim " . g:version] + startify#fortune#boxed())'
 " custom menus
 let g:startify_lists = [
             \ { 'header': ['   MRU'],            'type': 'files' },
@@ -469,8 +519,6 @@ let g:startify_lists = [
 "let g:fern#default_exclude = '\tags'
 let g:fern#renderer = "nerdfont"
 "let g:fern#disable_default_mappings = 1
-"toggle fern with <leader> f
-nnoremap <Leader>f :Fern . -reveal=% -drawer -width=30 -toggle <CR>
 ""<C-w>=
 "Start fern.vim on Vim startup with current directory
 ""augroup my-fern-startup
@@ -538,13 +586,13 @@ augroup END
 
 " this should be in the fern preview source code but it's not
 " getting set, so I added it here to avoid an error message
- if !exists('g:fern_preview_window_highlight')
-   if has('nvim')
-     let g:fern_preview_window_highlight = 'NormalFloat:Normal'
-   else
-     let g:fern_preview_window_highlight = 'Normal'
-   endif
- endif
+if !exists('g:fern_preview_window_highlight')
+    if has('nvim')
+        let g:fern_preview_window_highlight = 'NormalFloat:Normal'
+    else
+        let g:fern_preview_window_highlight = 'Normal'
+    endif
+endif
 "
 
 " function! s:fern_settings() abort
@@ -559,20 +607,27 @@ augroup END
 "     autocmd FileType fern call s:fern_settings()
 " augroup END
 
+" test if the current working directory contains the current file
+" if it does, then open fern in the current working directory
+" if it doesn't, then open fern in the directory of the current file
+" and switch to the directory of the current file
+function! OpenFern() abort
+    if expand('%:p') =~ getcwd()
+        execute 'Fern -drawer -toggle -reveal=% -width=25 .'
+    else
+        execute 'lcd ' . expand('%:p:h')
+        execute 'Fern -drawer -toggle -reveal=% -width=25 ' . expand('%:p:h')
+    endif
+endfunction
+
+"toggle fern with <leader> f
+nnoremap <silent> <leader>f :call OpenFern()<CR>
+
+""nnoremap <Leader>f :Fern %:h -drawer -width=30 -toggle <CR>
+
 " }}}
 
 " FZF {{{
-
-" TODO: send results from FZF to quickfix
-"  I want a function to add FZF search results to quickfix list
-"  I copied this function from the FZF.Vim manual
-"  It doesn't work...
-    " An action can be a reference to a function that processes selected lines
-    function! s:build_quickfix_list(lines)
-      call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
-      copen
-      cc
-    endfunction
 
 " open in splits and new tabs with Ctrl t/o/e/q
 " Tab/hOrizontal/vErtical/Quickfix
@@ -580,7 +635,6 @@ let g:fzf_action = {
             \ 'ctrl-t': 'tab split',
             \ 'ctrl-o': 'split',
             \ 'ctrl-e': 'vsplit',
-            \ 'ctrl-q': function('s:build_quickfix_list')
             \ }
 command! -bang -nargs=* GGrep
             \ call fzf#vim#grep(
@@ -635,8 +689,8 @@ let g:fzf_colors =
             \ 'spinner': ['fg', 'Label'],
             \ 'header':  ['fg', 'Comment'] }
 
-
 " }}}
+
 " Vista and tags stuff {{{
 nnoremap <leader>v :Vista!!<CR>
 "nnoremap <leader>t :Vista finder<CR>
@@ -645,18 +699,19 @@ let g:vista_keep_fzf_colors = 1
 let g:vista_default_executive = 'coc'
 let g:vista_vimwiki_executive = 'markdown'
 " let g:vista#executives = ['ale', 'coc', 'ctags', 'lcn', 'nvim_lsp', 'vim_lsc', 'vim_lsp', 'markdown']
-    " let g:vista#extensions = ['markdown', 'rst']
+" let g:vista#extensions = ['markdown', 'rst']
 
 " search for tags in the current buffer
 " `:Vista finder` also does a similar thing
 " but it doesn't seem to play well with coc
 " so I might change this map back to `:Vista finder`
 " if it is better in future
-" nnoremap  <Leader>o :BTags<CR>
 " map leader o to view outline, aka ctags in a fzf window
-nnoremap <leader>o :Vista finder coc<CR>
-
+" nnoremap <leader>o :Vista finder coc<CR>
+" nnoremap  <Leader>o :BTags<CR>
+nnoremap <leader>o <C-u>:CocFzfList outline<CR>
 " }}}
+
 " lsp-vim {{{
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "nnoremap <leader>l :LspHover<CR>
@@ -840,9 +895,6 @@ else
     set signcolumn=yes
 endif
 
-"make <TAB> operate the autocomplete
-inoremap <silent><expr> <tab> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<tab>"
-
 " prevent conflict with keymapping in vimwiki
 au filetype vimwiki silent! iunmap <buffer> <Tab>
 
@@ -882,6 +934,13 @@ let g:coc_filetype_map = {
             \ 'vimwiki': 'markdown',
             \ }
 " }}}
+
+" autocomplete coc + github copilot {{{
+
+"make <right> operate the autocomplete
+inoremap <silent><expr> <right> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<right>"
+
+" }}}
 " Emojis {{{
 " Use emoji-fzf and fzf to fuzzy-search for emoji, and insert the result
 function! InsertEmoji(emoji)
@@ -895,8 +954,11 @@ command! -bang Emoj
             \ })
 " Ctrl-e in normal and insert mode will open the emoji picker.
 " Unfortunately doesn't bring you back to insert mode 😕
-map <C-e> :Emoj<CR>
-imap <C-e> <C-o><C-e>
+" map <C-e> :Emoj<CR>
+" imap <C-e> <C-o><C-e>
+" call emoji picker with <C-e> in insert mode
+imap <C-e> <cmd>lua require('telescope').extensions.emoji.emoji()<CR>
+
 " }}}
 " Formatting {{{
 "" this deletes blank lines
@@ -955,15 +1017,15 @@ function! SaveLastReg()
     if v:event['regname']==""
         if v:event['operator']=='y'
             for i in range(8,1,-1)
-                exe "let @".string(i+1)." = @". string(i) 
+                exe "let @".string(i+1)." = @". string(i)
             endfor
             if exists("g:last_yank")
                 let @1=g:last_yank
             endif
             let g:last_yank=@"
-        endif 
+        endif
     endif
-endfunction 
+endfunction
 
 autocmd TextYankPost * call SaveLastReg()
 " }}}
@@ -984,13 +1046,14 @@ autocmd TextYankPost * call SaveLastReg()
 "nnoremap <leader>g :vertical Git<CR>:Twiggy<CR>
 " open git actions in FZF window
 nnoremap <leader>g :CocCommand fzf-preview.GitActions<CR>
-nnoremap <leader>d :Gvdiff<CR>:windo set foldmethod=manual<CR>
+nnoremap <leader>d :Gvdiffsplit<CR>:windo set foldmethod=manual<CR>:windo set foldlevel=20<CR>
 
 "navigate windows more easily
 nnoremap <tab>h <C-w>h
 nnoremap <tab>j <C-w>j
 nnoremap <tab>k <C-w>k
 nnoremap <tab>l <C-w>l
+
 " }}}
 " Diff colors {{{
 " my preferred diff colors
@@ -1005,6 +1068,7 @@ function! Colors()
     highlight DiffChange ctermfg=NONE ctermbg=000 guifg=NONE guibg=#000000
     highlight DiffDelete ctermfg=196 ctermbg=NONE guifg=#ff0000 guibg=NONE
     highlight DiffText ctermfg=NONE ctermbg=022 guifg=NONE guibg=#005f00
+    highlight Comment ctermfg=120 guifg=#95ffa4
     hi ColorColumn ctermbg=250 guibg=#ff8655
     highlight! link CopilotSuggestion Special
 endfunction
@@ -1020,10 +1084,10 @@ function! After()
     unmap <Leader>swp
     unmap <Leader>rwp
 
-function! fern_preview#width_default_func() abort
-let width = float2nr(&columns * 0.5)
-return width
-endfunction
+    function! fern_preview#width_default_func() abort
+        let width = float2nr(&columns * 0.5)
+        return width
+    endfunction
 endfunction
 " }}}
 " Setup {{{
@@ -1034,7 +1098,7 @@ cnoreabbrev duncansVimSetup call Setup()
 function! Setup()
     CocInstall coc-json coc-sh coc-css coc-html
                 \ coc-tsserver coc-markdownlint coc-phpls coc-pyright
-                \ coc-git coc-vimlsp coc-fzf-preview
+                \ coc-git coc-vimlsp coc-fzf-preview coc-explorer
     "CocConfig
     "norm o{"diagnostic.displayByAle": true,}
     "w
@@ -1114,6 +1178,6 @@ function! HtmlToMarkdown()
 endfunction
 
 " this has to be loaded after plugins, and it is
-" it is also called here so its settings are persistent after
+" also called here so its settings are persistent after
 " re-sourcing this file i.e `:so %`
 call Colors()

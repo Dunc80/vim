@@ -10,6 +10,9 @@ sudo apt install gnupg2
 # needed for fern to delete to trash
 sudo apt install trash-cli
 
+# finder for telescope
+sudo apt install fd-find
+
 # very fast searching for FZF to use
 sudo apt install ripgrep
 
