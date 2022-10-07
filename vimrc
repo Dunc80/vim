@@ -423,15 +423,15 @@ extensions = {
             if string.len(body) > 72 then
                 local new_body = ""
                 local i = 1
-                while i < string.len(body) do
+                while i+71 < string.len(body) do
                     -- find the nearest space before 72 characters
                     -- cycle backwards from 72 characters until a space is found
                     space = 72
                     while space > 0 and string.sub(body, space + i, space + i) ~= " " do
                     space = space - 1
                     end
-                    --
-                    --           -- if there is no space before 72 characters, then just insert a newline
+                    
+                    -- if there is no space before 72 characters, then just insert a newline
                     if space == 0 then
                         new_body = new_body .. string.sub(body, i, i + 71) .. "-\n"
                         i = i + 72
