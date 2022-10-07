@@ -165,7 +165,7 @@ Plug 'matze/vim-move'
 " operate on whole lines
 " this plugin make `:'<,'>B` only
 " operate on the selected block
-Plug 'vim-scripts/vis'
+" Plug 'vim-scripts/vis'
 
 " Fern filesystem viewer
 Plug 'lambdalisue/fern.vim'
@@ -357,6 +357,123 @@ extensions = {
         vim.api.nvim_put({ emoji.value }, 'c', false, true)
         end,
         },
+
+    gitmoji = {
+        action = function(entry)
+
+        -- ask for type of commit
+        -- the user can select from a list of commit types
+        -- they are numbered so the user can type the number
+        local commit_types = {
+            "1. feat: A new feature",
+            "2. fix: A bug fix",
+            "3. docs: Documentation only changes",
+            "4. style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)",
+            "5. refactor: A code change that neither fixes a bug nor adds a feature",
+            "6. perf: A code change that improves performance",
+            "7. test: Adding missing tests or correcting existing tests",
+            "8. build: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)",
+            "9. ci: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)",
+            "10. chore: Other changes that don't modify src or test files",
+            "11. revert: Reverts a previous commit",
+            "12. WIP: Work in progress",
+            }
+
+        -- let the user choose a commit type
+        local commit_type = vim.fn.inputlist(commit_types)
+
+        -- parse the commit type from the list
+        local commit_type = commit_types[commit_type]
+
+        -- get the commit type from the string
+        -- e.g. "1. feat: A new feature" -> "feat"
+        commit_type = string.match(commit_type, "%d%. (%w+):")
+
+        -- reset the cmdline
+        vim.cmd [[redraw]]
+
+        -- ask for scope of commit with instructions
+        local scope = vim.fn.input("Scope of commit, a scope MUST consist of a noun describing a section of the codebase: ")
+
+        -- define instructions for inputting the description
+        local description_instructions = "Short description of commit, MUST be in the imperative, present tense, MUST NOT be more than 50 characters: "
+
+        local description = vim.fn.input(description_instructions)
+        -- if the description is longer than 50 characters, then ask to edit it
+        -- until it is shorter than 50 characters
+        while string.len(description) > 50 do
+            -- ask to edit the description
+            -- ask again but with the previous description as the default
+            description = vim.fn.input(description_instructions, description)
+            end
+
+            -- if the description ends with a period, then remove it
+            if string.sub(description, -1) == "." then
+                description = string.sub(description, 1, -2)
+            end
+
+            -- if the description contains any capital letters, then lowercase them
+            description = string.lower(description)
+
+            -- ask for a longer description of the commit
+            local body = vim.fn.input("Longer description of commit: ")
+
+            -- if the description is longer than 72 characters, then wrap insert a newline
+            -- every 72 characters, or at the nearest space before 72 characters
+            if string.len(body) > 72 then
+                local new_body = ""
+                local i = 1
+                while i < string.len(body) do
+                    -- find the nearest space before 72 characters
+                    -- cycle backwards from 72 characters until a space is found
+                    space = 72
+                    while space > 0 and string.sub(body, space + i, space + i) ~= " " do
+                    space = space - 1
+                    end
+                    --
+                    --           -- if there is no space before 72 characters, then just insert a newline
+                    if space == 0 then
+                        new_body = new_body .. string.sub(body, i, i + 71) .. "-\n"
+                        i = i + 72
+                    else
+                        -- if there is a space before 72 characters, then insert a newline
+                        -- at the space
+                        new_body = new_body .. string.sub(body, i, i + space - 1) .. "\n"
+                        i = i + space + 1
+                    end
+                end
+                --add the last line of the body
+                new_body = new_body .. string.sub(body, i)
+                -- set the body to the new body
+                body = new_body
+            end
+            -- ask for a list of breaking changes
+            local breaking_changes = vim.fn.input("List of breaking changes: ")
+            -- if there are breaking changes, prefix them with BREAKING-CHANGE:
+            -- if there are no breaking changes, then set breaking to an empty string
+            if breaking_changes ~= "" then
+                breaking_changes = "BREAKING-CHANGE: " .. breaking_changes .. "\n"
+            end
+            -- ask the user to sign off on the commit
+            local signoff = vim.fn.input("Enter your name to sign off on the commit: ")
+            -- if the user entered a name, then sign off on the commit
+            -- if the user did not enter a name, then do not sign off on the commit
+            if signoff ~= "" then
+                signoff = "Signed-off-by: " .. signoff
+            end
+            --compose the commit message
+            local message = entry.value .. commit_type .. "(" .. scope .. "): "
+            message = message .. description .. "\n\n" .. body .. "\n\n"
+            message = message .. breaking_changes .. signoff .. "\n"
+            -- insert the commit message into the current buffer
+            vim.api.nvim_command("normal! i" .. message)
+            -- move the cursor to the start of the buffer
+            -- so that the user can edit the commit message
+            vim.api.nvim_command("normal! gg")
+            -- leave insert mode
+            vim.api.nvim_command("stopinsert")
+        end,
+        },
     },
 })
 require('telescope').load_extension('coc')
@@ -365,12 +482,12 @@ require('telescope').load_extension("gitmoji")
 
 EOF
 
-    " }}}
-    " QuickFix / Location List {{{
+" }}}
+" QuickFix / Location List {{{
 
-    " setup and settings for todo-comments plugin
-    lua << EOF
-    require("todo-comments").setup {
+" setup and settings for todo-comments plugin
+lua << EOF
+require("todo-comments").setup {
     -- your configuration comes here
     -- or leave it empty to use the default settings
     -- refer to the configuration section below
@@ -447,6 +564,16 @@ augroup bufenter
     " if the file is not contained in the working directory
     " then change the working directory to the file's directory
     autocmd BufEnter * if expand('%:p') !~# getcwd() | lcd %:p:h | endif
+augroup END
+
+augroup commit
+    autocmd!
+    " if the buffer is a new commit message buffer then open Telescope gitmoji
+    autocmd BufEnter *.git/COMMIT_EDITMSG if !exists('b:entered') |
+                \ let b:entered = 1 |
+                \ set colorcolumn=72 |
+                \ execute 'Telescope gitmoji' |
+                \ endif
 augroup END
 
 autocmd FileType markdown set conceallevel=3
@@ -959,6 +1086,7 @@ command! -bang Emoj
 " call emoji picker with <C-e> in insert mode
 imap <C-e> <cmd>lua require('telescope').extensions.emoji.emoji()<CR>
 
+" imap <C-e> <cmd>lua require'telescope.builtin'.symbols{ sources = {'emoji'} }<cr>
 " }}}
 " Formatting {{{
 "" this deletes blank lines
@@ -1081,13 +1209,15 @@ endfunction
 function! After()
     call Colors()
     "disable plugin maps that slow down my own
-    unmap <Leader>swp
-    unmap <Leader>rwp
+
+    " unmap <Leader>swp
+    " unmap <Leader>rwp
 
     function! fern_preview#width_default_func() abort
         let width = float2nr(&columns * 0.5)
         return width
     endfunction
+
 endfunction
 " }}}
 " Setup {{{
@@ -1099,6 +1229,7 @@ function! Setup()
     CocInstall coc-json coc-sh coc-css coc-html
                 \ coc-tsserver coc-markdownlint coc-phpls coc-pyright
                 \ coc-git coc-vimlsp coc-fzf-preview coc-explorer
+                \ coc-conventional
     "CocConfig
     "norm o{"diagnostic.displayByAle": true,}
     "w
