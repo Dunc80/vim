@@ -709,8 +709,10 @@ extensions = {
             if signoff ~= "" then
                 signoff = "Signed-off-by: " .. signoff
             end
+            -- get the emoji from the entry, as a string
+            local emoji = entry.value.value
             --compose the commit message
-            local message = entry.value .. commit_type .. "(" .. scope .. "): "
+            local message = emoji .. commit_type .. "(" .. scope .. "): "
             message = message .. description .. "\n\n" .. body .. "\n\n"
             message = message .. breaking_changes .. signoff .. "\n"
             -- insert the commit message into the current buffer
