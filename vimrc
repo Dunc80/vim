@@ -1,6 +1,6 @@
 " using the .vimrc file in your home folder will require -E
 " when using sudo on some systems, or vim will give the default/root user settings
-" eg sudo -E vim filename
+" eg sudo -E nvim filename
 "
 " to reload this file after editing it use :source %
 " or for short :so %
@@ -14,7 +14,7 @@
 
 " navigate this file with folding
 " `zm` to close all folds by one level
-" `l` open current fold
+" `za` toggle current fold
 "
 " TODO: tidy all code
 "   remove code that is commented out
@@ -34,11 +34,11 @@
 " General settings {{{
 
 set encoding=utf-8
-" scriptencoding utf-8
-" set fileencoding=utf-8
 " this makes vim be vim
 " instead of pretending to be vi
 set nocompatible
+" do this before any other color settings
+set termguicolors
 "set backspace=indent,eol,start
 "set ruler
 set showcmd
@@ -181,10 +181,6 @@ Plug 'yuki-yano/fern-preview.vim'
 " this optimises certain plugins in nvim
 Plug 'antoinemadec/FixCursorHold.nvim'
 
-" info at bottom of buffer
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-
 " syntax error highlighting
 " I'm going to remove this because
 " I think COC is doing it as well
@@ -298,7 +294,7 @@ Plug 'vim-vdebug/vdebug'
 
 " TODOs in quickfix list
 Plug 'nvim-lua/plenary.nvim'
-Plug 'folke/todo-comments.nvim'
+Plug 'folke/todo-comments.nvim', { 'branch': 'neovim-pre-0.8.0' }
 
 " smooth scrolling
 Plug 'karb94/neoscroll.nvim'
@@ -330,15 +326,267 @@ endfunction
 Plug 'keelbeelveel/miamineon', { 'do': function('Miamineon')}
 Plug 'nanotech/jellybeans.vim'
 Plug 'sickill/vim-monokai'
-
-" tab naming
-Plug 'gcmt/taboo.vim'
+" use gitsigns so statusline can get git info
+Plug 'lewis6991/gitsigns.nvim'
+" lualine for statusline and tabline
+Plug 'nvim-lualine/lualine.nvim'
 
 " All plugins must be added before the following line
 call plug#end()
+" }}}
 
-lua require('neoscroll').setup()
+colorscheme challenger_deep
+
+" {{{ LuaLine config
 lua << EOF
+
+local function GetHiVal(name, layer)
+  local fn = vim.fn
+  return fn['synIDattr'](fn[('synIDtrans')](fn['hlID'](name)), layer .. '#')
+end
+
+require('lualine').setup {
+  options = {
+    icons_enabled = true,
+    theme = 'auto',
+    component_separators = { left = '', right = ''},
+    section_separators = { left = '', right = ''},
+    disabled_filetypes = {
+      statusline = {},
+      winbar = {},
+    },
+    ignore_focus = {},
+    always_divide_middle = true,
+    globalstatus = false,
+    refresh = {
+      statusline = 1000,
+      tabline = 1000,
+      winbar = 1000,
+    }
+  },
+  sections = {
+    lualine_a = {'mode'},
+    lualine_b = {
+        {'branch',
+
+            icon = '',
+           -- colors are the highlight group for statusline
+           color = {fg = GetHiVal('statusline', 'fg'),
+           bg = GetHiVal('statusline', 'bg')},
+
+        },
+    {'diff',
+
+           color = {
+           bg = GetHiVal('signcolumn', 'bg')},
+
+
+  symbols = { added = ' ', modified = '柳 ', removed = ' ' },
+  -- diff_color = {
+  --   added = { fg = colors.green },
+  --   modified = { fg = colors.orange },
+  --   removed = { fg = colors.red },
+  -- },
+  -- cond = conditions.hide_in_width,
+
+
+
+
+    }, 
+
+    {'diagnostics',
+
+
+
+
+           color = {
+           bg = GetHiVal('signcolumn', 'bg')},
+
+  sources = { 'nvim_diagnostic', 'coc' },
+  symbols = { error = ' ', warn = ' ', info = ' ' },
+  -- diagnostics_color = {
+  --   color_error = { fg = colors.red },
+  --   color_warn = { fg = colors.yellow },
+  --   color_info = { fg = colors.cyan },
+
+},
+{
+    function()
+    -- count the number times the word 'TODO:' appears in the current buffer
+    local todo = vim.fn.searchcount({pattern = 'TODO:', flags = 'c'})
+    -- return the count if it's greater than 0
+    return todo.total > 0 and ' ' .. todo.total or ''
+    end,
+    color = {
+           bg = GetHiVal('signcolumn', 'bg'),
+           fg = GetHiVal('diagnosticinfo', 'fg')
+           },
+ 
+
+
+}
+},
+    lualine_c = {
+        {'filename',
+            path = 3,
+            symbols = { modified = '✏️', readonly = '🔒' },
+            -- show in red if modified
+            color = function()
+                if vim.bo.modified then
+                    return { fg = GetHiVal('errormsg', 'fg') }
+                end
+            end,
+        },
+        {
+                'filesize',
+        },
+    -- change the color of the filename if it is edited
+
+
+        },
+    lualine_x = {{ 'encoding',
+    color = {fg = GetHiVal('signcolumn', 'fg'),
+           bg = GetHiVal('signcolumn', 'bg')},
+    },
+{'fileformat',
+color = {fg = GetHiVal('signcolumn', 'fg'),
+           bg = GetHiVal('signcolumn', 'bg')},
+},
+{'filetype',
+    color = {fg = GetHiVal('signcolumn', 'fg'),
+           bg = GetHiVal('signcolumn', 'bg')},
+    },
+    },
+    lualine_y = {
+        {'progress', 
+    color = {fg = GetHiVal('signcolumn', 'fg'),
+           bg = GetHiVal('signcolumn', 'bg')},
+    },
+},
+    lualine_z = {
+        {
+        'location',
+    color = {fg = GetHiVal('signcolumn', 'fg'),
+           bg = GetHiVal('signcolumn', 'bg')},
+           fmt = function(location)
+           -- show in the format of character line/total lines
+           local current_line = vim.fn.line('.')
+           local total_lines = vim.fn.line('$')
+           local character = vim.fn.col('.')
+           return string.format('%d:%d/%d', character, current_line, total_lines)
+           end,
+           },
+
+
+
+    },
+  },
+  inactive_sections = {
+    lualine_a = {},
+    lualine_b = {},
+    lualine_c = {'filename'},
+    lualine_x = {'location'},
+    lualine_y = {},
+    lualine_z = {}
+  },
+  tabline = {
+
+  lualine_a = {
+      { 'tabs',
+          mode = 2,
+          -- max length is full width of screen
+          max_length = function()
+              return vim.fn.winwidth(0)
+          end,
+
+          fmt = function(name, context)
+        -- Show + if buffer is modified in tab
+        local buflist = vim.fn.tabpagebuflist(context.tabnr)
+        local winnr = vim.fn.tabpagewinnr(context.tabnr)
+        local bufnr = buflist[winnr]
+        local mod = vim.fn.getbufvar(bufnr, '&mod')
+
+        return name .. (mod == 1 and ' ✏️ ' or ' ')
+      end,
+      
+             tabs_color = 
+             {
+                      active = {
+                        fg = GetHiVal('tabline', 'fg'),
+                        bg = GetHiVal('tabline', 'bg'),
+                          },
+                      inactive = {
+                        fg = GetHiVal('tablinesel', 'fg'), 
+                        bg = GetHiVal('tablinesel', 'bg'),
+
+                          },
+             },
+
+      }},
+  lualine_b = {},
+  lualine_c = {},
+  lualine_x = {},
+  lualine_y = {},
+  lualine_z = {}
+
+      },
+  winbar = {},
+  inactive_winbar = {},
+  extensions = {'fern', 'fugitive', 'fzf'}
+}
+
+EOF
+
+" }}}
+" {{{ setup more lua plugins
+
+lua << EOF
+
+-- needed to show the git status in the statusline
+require('gitsigns').setup {
+-- signs = {
+--   add          = { text = '│' },
+--   change       = { text = '│' },
+--   delete       = { text = '_' },
+--   topdelete    = { text = '‾' },
+--   changedelete = { text = '~' },
+--   untracked    = { text = '┆' },
+-- },
+  signcolumn = false,  -- Toggle with `:Gitsigns toggle_signs`
+  numhl      = false, -- Toggle with `:Gitsigns toggle_numhl`
+  linehl     = false, -- Toggle with `:Gitsigns toggle_linehl`
+  word_diff  = false, -- Toggle with `:Gitsigns toggle_word_diff`
+  watch_gitdir = {
+    interval = 1000,
+    follow_files = true
+  },
+-- attach_to_untracked = true,
+-- current_line_blame = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
+-- current_line_blame_opts = {
+--   virt_text = true,
+--   virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'
+--   delay = 1000,
+--   ignore_whitespace = false,
+-- },
+-- current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
+-- sign_priority = 6,
+-- update_debounce = 100,
+-- status_formatter = nil, -- Use default
+-- max_file_length = 40000, -- Disable if file is longer than this (in lines)
+-- preview_config = {
+--   -- Options passed to nvim_open_win
+--   border = 'single',
+--   style = 'minimal',
+--   relative = 'cursor',
+--   row = 0,
+--   col = 1
+-- },
+-- yadm = {
+--   enable = false
+-- },
+}
+
+require('neoscroll').setup()
 require("telescope").setup({
 extensions = {
     coc = {
@@ -545,8 +793,6 @@ filetype plugin indent on
 filetype plugin on
 set smartindent
 runtime macros/matchit.vim
-"required for RRethy/vim-hexokinase
-set termguicolors
 set t_Co=256
 "set term=xterm-256color
 "Set the colorscheme
@@ -607,6 +853,13 @@ set virtualedit=insert
 "vmap <unique> <left>  <Plug>SchleppLeft
 "vmap <unique> <right> <Plug>SchleppRight
 "vmap <unique> D <Plug>SchleppDup
+"
+" save the current working directory in a variable on startup
+" so that it can be restored later
+let g:cwd = getcwd()
+" restore the working directory when vim is closed
+autocmd VimLeave * lcd g:cwd
+
 " }}}
 " Startify {{{
 let g:startify_change_to_vcs_root = 1
@@ -674,10 +927,12 @@ function! FernInit() abort
                 \ <Plug>(fern-action-enter)
                 \ <Plug>(fern-wait)
                 \ <Plug>(fern-action-tcd:root)
+                \ <Plug>(fern-action-lcd:root)
     nmap <buffer> <Plug>(fern-my-leave-and-tcd)
                 \ <Plug>(fern-action-leave)
                 \ <Plug>(fern-wait)
                 \ <Plug>(fern-action-tcd:root)
+                \ <Plug>(fern-action-lcd:root)
     nmap <buffer> > <Plug>(fern-my-enter-and-tcd)
     nmap <buffer> < <Plug>(fern-my-leave-and-tcd)
     " nmap <buffer> p     <Plug>(fern-action-preview:toggle)
@@ -876,89 +1131,19 @@ let g:lsp_signature_help_delay = 0
 " Gutentags {{{
 "set statusline+=%{gutentags#statusline()}
 "" }}}
-" Status Bar {{{
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Always show statusbar
-set laststatus=2
-" -- INSERT -- etcetera is shown by airline
-" so don't need to show it in the command line
-set noshowmode
-" better not to set this, airline finds
-" the colorscheme anyway, but doesn't
-" change if you switch colorschemes when it
-" is set explicitly here
-" let g:airline_theme = 'miamineon'
-" Show PASTE if in paste mode
-let g:airline_detect_paste=1
-let g:airline_detect_crypt=1
-let g:airline#extensions#branch#enabled = 1
-let g:airline_powerline_fonts = 1
-let g:airline#extensions#tagbar#enabled = 0
-let g:airline#extensions#hunks#enabled = 1
-let g:airline#extensions#hunks#coc_git = 1
-let g:airline#extensions#fzf#enabled = 1
-let g:airline#extensions#fern#enabled = 1
-let g:airline#extensions#coc#enabled = 1
-let g:airline#extensions#fugitiveline#enabled = 1
-let g:airline#extensions#fugitive#enabled = 1
-let airline#extensions#coc#error_symbol = '🚫'
-let airline#extensions#coc#warning_symbol = '⚠️'
-let g:airline#extensions#gutentags#enabled = 1
-"if !exists('g:airline_symbols')
-"let g:airline_symbols = {}
-"endif
-"if !exists('g:airline_powerline_fonts')
-"let g:airline#extensions#tabline#left_sep = ' '
-"let g:airline#extensions#tabline#left_alt_sep = '|'
-"let g:airline_left_sep          = '▶'
-"let g:airline_left_alt_sep      = '»'
-"let g:airline_right_sep         = '◀'
-"let g:airline_right_alt_sep     = '«'
-"let g:airline#extensions#branch#prefix     = '⤴' "➔, ➥, ⎇
-"let g:airline#extensions#readonly#symbol   = '⊘'
-"let g:airline#extensions#linecolumn#prefix = '¶'
-"let g:airline#extensions#paste#symbol      = 'ρ'
-"let g:airline_symbols.linenr    = '␊'
-"let g:airline_symbols.branch    = '⎇'
-"let g:airline_symbols.paste     = 'ρ'
-"let g:airline_symbols.paste     = 'Þ'
-"let g:airline_symbols.paste     = '∥'
-"let g:airline_symbols.whitespace = 'Ξ'
-"else
-"let g:airline#extensions#tabline#left_sep = ''
-"let g:airline#extensions#tabline#left_alt_sep = ''
-"" powerline symbols
-let g:airline_left_sep = ''
-let g:airline_left_alt_sep = ''
-let g:airline_right_sep = ''
-let g:airline_right_alt_sep = ''
-"let g:airline_symbols.branch = ''
-"let g:airline_symbols.readonly = ''
-"let g:airline_symbols.linenr = ''
-"endif
-"" }}}
 " Tab Bar {{{
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#show_buffers = 0
-let g:airline#extensions#tabline#show_splits = 0
-"show tab number, not number of splits in tab
-let g:airline#extensions#tabline#tab_nr_type = 1
-"only show tabline if there is more than one tab
-let g:airline#extensions#tabline#tab_min_count = 2
-"set showtabline=1
-" expose maps to jump to tabs
-let g:airline#extensions#tabline#buffer_idx_mode = 1
-" set those maps
-nmap <leader>1 <Plug>AirlineSelectTab1
-nmap <leader>2 <Plug>AirlineSelectTab2
-nmap <leader>3 <Plug>AirlineSelectTab3
-nmap <leader>4 <Plug>AirlineSelectTab4
-nmap <leader>5 <Plug>AirlineSelectTab5
-nmap <leader>6 <Plug>AirlineSelectTab6
-nmap <leader>7 <Plug>AirlineSelectTab7
-nmap <leader>8 <Plug>AirlineSelectTab8
-nmap <leader>9 <Plug>AirlineSelectTab9
-nmap <leader>0 <Plug>AirlineSelectTab0
+
+" set mappings to switch tabs
+nnoremap <leader>1 :tabn 1<CR>
+nnoremap <leader>2 :tabn 2<CR>
+nnoremap <leader>3 :tabn 3<CR>
+nnoremap <leader>4 :tabn 4<CR>
+nnoremap <leader>5 :tabn 5<CR>
+nnoremap <leader>6 :tabn 6<CR>
+nnoremap <leader>7 :tabn 7<CR>
+nnoremap <leader>8 :tabn 8<CR>
+nnoremap <leader>9 :tabn 9<CR>
+
 " }}}
 " Vim Wiki {{{
 let g:vimwiki_list = [{'path': '~/Notes/',
@@ -1053,7 +1238,7 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 " Symbol renaming.
 "nnoremap <leader>rn <Plug>(coc-rename)
 """"" coc-fzf
-nnoremap <leader>c <C-u>:CocFzfList<CR>
+nnoremap <leader>c <C-u>:Telescope coc<CR>
 let g:coc_fzf_preview = 'right:50%'
 let g:coc_fzf_opts = []
 " let coc treat vimwiki files as md
