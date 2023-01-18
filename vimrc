@@ -31,69 +31,7 @@
 "   pull to vps
 "   pull to pi
 
-" General settings {{{
-
-set encoding=utf-8
-" this makes vim be vim
-" instead of pretending to be vi
-set nocompatible
-" do this before any other color settings
-set termguicolors
-"set backspace=indent,eol,start
-"set ruler
-set showcmd
-set incsearch
-set hlsearch
-syntax on
-set mouse=a
-" set leader as space
-let mapleader = " "
-"set tabstop=2
-"set shiftwidth=2
-set autoindent
-set smartindent
-" start scrolling the text when
-" the cursor is 5 lines
-" from the top or bottom of the screen
-set scrolloff=5
-"let php_sql_query = 1
-"let php_htmlInStrings = 1
-" set list of characters to represent blank characters
-set listchars=tab:\ \ ⇥,nbsp:␣,trail:·,extends:→,precedes:←,eol:¶
-" switch on hidden characters
-" or leave this commented to leave them hidden
-"set list
-syntax enable
-set ignorecase
-set smartcase
-"set spell
-set linebreak
-set backupdir=~/.vim/backup//
-set dir=~/.vim/swap//
-set undodir=~/.vim/undo//
-set nofoldenable
-set hidden
-set cmdheight=2
-set updatetime=300
-" set font for firenvim browser extension
-set guifont=courier:h14
-" my terminal emulator (konsole) overrules
-" vims ctrl-v command, to use it for paste,
-" and I like it like that
-" so map vv to enter visual block mode
-nnoremap vv <C-v>
-" and in firenvim it doesn't do that,
-" so remap it so it does
-nnoremap <C-v> "+p
-inoremap <C-v> <Esc>"+pa
-" and Ctrl C to copy
-vnoremap <C-c> "+y
-" leave COC to handle LSP
-" this must come before plugins are loaded
-"let g:ale_disable_lsp = 1
-" }}}
 " Vim-Plug {{{
-
 " Install vim-plug if it isn't already
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
 if empty(glob(data_dir . '/autoload/plug.vim'))
@@ -112,25 +50,18 @@ call plug#begin()
 " This will include the help
 " files for vim-plug itself
 Plug 'junegunn/vim-plug'
+
 " github co-pilot
 Plug 'github/copilot.vim'
+
 " Git stuff
-" git automation
 Plug 'tpope/vim-fugitive'
 " github support
 Plug 'tpope/vim-rhubarb'
 " bitbucket support
-"Plug 'tommcdo/vim-fubitive'
-" branch viewer for git
-Plug 'sodapopcan/vim-twiggy'
-" Plug 'idanarye/vim-merginal'
-" git commit browser
-Plug 'junegunn/gv.vim'
-" view git changes
-"Plug 'mhinz/vim-signify'
-"Plug 'airblade/vim-gitgutter'
-" nerdtree filesystem viewer
-"Plug 'preservim/nerdtree'
+Plug 'tommcdo/vim-fubitive'
+" use gitsigns so statusline can get git info
+Plug 'lewis6991/gitsigns.nvim'
 
 " show guidelines for indented text
 Plug 'nathanaelkane/vim-indent-guides'
@@ -156,8 +87,6 @@ Plug 'kana/vim-textobj-indent'
 Plug 'kana/vim-textobj-line'
 
 " Drag visual blocks
-"Plug 'zirrostig/vim-schlepp'
-"schlepp doesn't work with nvim
 Plug 'matze/vim-move'
 
 " In block selection mode
@@ -181,50 +110,18 @@ Plug 'yuki-yano/fern-preview.vim'
 " this optimises certain plugins in nvim
 Plug 'antoinemadec/FixCursorHold.nvim'
 
-" syntax error highlighting
-" I'm going to remove this because
-" I think COC is doing it as well
-" Plug 'scrooloose/syntastic'
-
 "automatic ctags generation
 "Plug 'xolox/vim-misc'
 "Plug 'xolox/vim-easytags'
 Plug 'universal-ctags/ctags'
 Plug 'ludovicchabant/vim-gutentags'
 
-""" LSP stuff
-" not using this now because using
-" COC instead
-"Plug 'prabirshrestha/vim-lsp'
-" sets up LSP servers to use
-"Plug 'mattn/vim-lsp-settings'
-" autocomplete
-"Plug 'prabirshrestha/asyncomplete.vim'
-"Plug 'prabirshrestha/asyncomplete-lsp.vim'
-" LSP completion sources
-"Plug 'andreypopp/asyncomplete-ale.vim'
-"Plug 'htlsne/asyncomplete-look'
-"Plug 'kitagry/asyncomplete-tabnine.vim', { 'do': './install.sh' }
-" asynchronous lint engine
-"Plug 'dense-analysis/ale'
-
-" coc
+" Conquerer Of Completion
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'antoinemadec/coc-fzf'
+
 " read and write files with sudo
 Plug 'lambdalisue/suda.vim'
-" window management
-" Plug 'anuvyklack/middleclass'
-" Plug 'anuvyklack/animation.nvim'
-" Plug 'anuvyklack/windows.nvim'
-" tmux window shortcuts
-" Plug 'christoomey/vim-tmux-navigator'
-" Close all buffers that are not open in any tabs or windows
-
-" Already have tabnine as a source for asyncomplete
-" but this is the official plugin so I might try it instead
-" actually not using it, it works better through coc
-"Plug 'codota/tabnine-vim'
 
 "tagbar to navigate tags
 Plug 'preservim/tagbar'
@@ -234,9 +131,6 @@ Plug 'preservim/tagbar'
 " and vista shows TOC for markdown
 " and LSP tags
 Plug 'liuchengxu/vista.vim'
-
-" automatic closing of quotes, parentheses etc
-"Plug 'Raimondi/delimitMate'
 
 " autocloses html tags
 Plug 'vim-scripts/HTML-AutoCloseTag'
@@ -259,7 +153,6 @@ Plug 'nvim-telescope/telescope-symbols.nvim'
 Plug 'olacin/telescope-gitmoji.nvim'
 
 " shows colors of hex codes
-"Plug 'lilydjwg/colorizer'
 Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
 
 " syntax highlighting for many languages
@@ -282,7 +175,7 @@ Plug 'vimwiki/vimwiki'
 Plug 'godlygeek/tabular'
 Plug 'preservim/vim-markdown'
 
-" peekaboo registers helpers
+" shows the content of registers when pressing " or @
 Plug 'junegunn/vim-peekaboo'
 
 " fancy start screen
@@ -326,13 +219,76 @@ endfunction
 Plug 'keelbeelveel/miamineon', { 'do': function('Miamineon')}
 Plug 'nanotech/jellybeans.vim'
 Plug 'sickill/vim-monokai'
-" use gitsigns so statusline can get git info
-Plug 'lewis6991/gitsigns.nvim'
+
 " lualine for statusline and tabline
 Plug 'nvim-lualine/lualine.nvim'
 
 " All plugins must be added before the following line
 call plug#end()
+" }}}
+" General settings {{{
+
+set encoding=utf-8
+" this makes vim be vim
+" instead of pretending to be vi
+set nocompatible
+" do this before any other color settings
+set termguicolors
+colorscheme challenger_deep
+"set backspace=indent,eol,start
+"set ruler
+set showcmd
+set incsearch
+set hlsearch
+syntax on
+set mouse=a
+" set leader as space
+let mapleader = " "
+set tabstop=4
+set shiftwidth=4
+set expandtab
+set softtabstop=4
+set autoindent
+set smartindent
+" start scrolling the text when
+" the cursor is 5 lines
+" from the top or bottom of the screen
+set scrolloff=5
+"let php_sql_query = 1
+"let php_htmlInStrings = 1
+" set list of characters to represent blank characters
+set listchars=tab:\ \ ⇥,nbsp:␣,trail:·,extends:→,precedes:←,eol:¶
+" switch on hidden characters
+" or leave this commented to leave them hidden
+"set list
+syntax enable
+set ignorecase
+set smartcase
+"set spell
+set linebreak
+set backupdir=~/.vim/backup//
+set dir=~/.vim/swap//
+set undodir=~/.vim/undo//
+set nofoldenable
+set hidden
+set cmdheight=2
+set updatetime=300
+" set font for firenvim browser extension
+set guifont=courier:h14
+" my terminal emulator (konsole) overrules
+" vims ctrl-v command, to use it for paste,
+" and I like it like that
+" so map vv to enter visual block mode
+nnoremap vv <C-v>
+" and in firenvim it doesn't do that,
+" so remap it so it does
+nnoremap <C-v> "+p
+inoremap <C-v> <Esc>"+pa
+" and Ctrl C to copy
+vnoremap <C-c> "+y
+" leave COC to handle LSP
+" this must come before plugins are loaded
+"let g:ale_disable_lsp = 1
 " }}}
 
 colorscheme challenger_deep
