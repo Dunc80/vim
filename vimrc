@@ -13,7 +13,7 @@
 " profile file *
 
 " navigate this file with folding
-" `zm` to close all folds by one level
+" `zM` to close all folds by one level
 " `za` toggle current fold
 "
 " TODO: tidy all code
@@ -226,6 +226,7 @@ Plug 'nvim-lualine/lualine.nvim'
 " All plugins must be added before the following line
 call plug#end()
 " }}}
+
 " General settings {{{
 
 set encoding=utf-8
@@ -235,8 +236,6 @@ set nocompatible
 " do this before any other color settings
 set termguicolors
 colorscheme challenger_deep
-"set backspace=indent,eol,start
-"set ruler
 set showcmd
 set incsearch
 set hlsearch
@@ -244,18 +243,16 @@ syntax on
 set mouse=a
 " set leader as space
 let mapleader = " "
-set tabstop=4
-set shiftwidth=4
+set tabstop=2
+set shiftwidth=2
 set expandtab
-set softtabstop=4
+set softtabstop=2
 set autoindent
 set smartindent
 " start scrolling the text when
 " the cursor is 5 lines
 " from the top or bottom of the screen
 set scrolloff=5
-"let php_sql_query = 1
-"let php_htmlInStrings = 1
 " set list of characters to represent blank characters
 set listchars=tab:\ \ ⇥,nbsp:␣,trail:·,extends:→,precedes:←,eol:¶
 " switch on hidden characters
@@ -271,7 +268,7 @@ set dir=~/.vim/swap//
 set undodir=~/.vim/undo//
 set nofoldenable
 set hidden
-set cmdheight=2
+set cmdheight=1
 set updatetime=300
 " set font for firenvim browser extension
 set guifont=courier:h14
@@ -286,12 +283,7 @@ nnoremap <C-v> "+p
 inoremap <C-v> <Esc>"+pa
 " and Ctrl C to copy
 vnoremap <C-c> "+y
-" leave COC to handle LSP
-" this must come before plugins are loaded
-"let g:ale_disable_lsp = 1
 " }}}
-
-colorscheme challenger_deep
 
 " {{{ LuaLine config
 lua << EOF
@@ -302,70 +294,44 @@ local function GetHiVal(name, layer)
 end
 
 require('lualine').setup {
-  options = {
-    icons_enabled = true,
-    theme = 'auto',
-    component_separators = { left = '', right = ''},
-    section_separators = { left = '', right = ''},
-    disabled_filetypes = {
-      statusline = {},
-      winbar = {},
-    },
-    ignore_focus = {},
-    always_divide_middle = true,
-    globalstatus = false,
-    refresh = {
-      statusline = 1000,
-      tabline = 1000,
-      winbar = 1000,
-    }
-  },
-  sections = {
-    lualine_a = {'mode'},
-    lualine_b = {
-        {'branch',
-
-            icon = '',
-           -- colors are the highlight group for statusline
-           color = {fg = GetHiVal('statusline', 'fg'),
-           bg = GetHiVal('statusline', 'bg')},
-
+    options = {
+        icons_enabled = true,
+        theme = 'auto',
+        component_separators = { left = '', right = ''},
+        section_separators = { left = '', right = ''},
+        disabled_filetypes = {
+            statusline = {},
+            winbar = {},
+            },
+        ignore_focus = {},
+        always_divide_middle = true,
+        globalstatus = false,
+        refresh = {
+            statusline = 1000,
+            tabline = 1000,
+            winbar = 1000,
+            }
         },
-    {'diff',
-
-           color = {
-           bg = GetHiVal('signcolumn', 'bg')},
-
-
-  symbols = { added = ' ', modified = '柳 ', removed = ' ' },
-  -- diff_color = {
-  --   added = { fg = colors.green },
-  --   modified = { fg = colors.orange },
-  --   removed = { fg = colors.red },
-  -- },
-  -- cond = conditions.hide_in_width,
-
-
-
-
-    }, 
-
+    sections = {
+        lualine_a = {'mode'},
+        lualine_b = {
+            {'branch',
+                icon = '',
+                -- colors are the highlight group for statusline
+                color = {fg = GetHiVal('statusline', 'fg'),
+                bg = GetHiVal('statusline', 'bg')},
+            },
+        {'diff',
+            color = {
+                bg = GetHiVal('signcolumn', 'bg')},
+                symbols = { added = ' ', modified = '柳 ', removed = ' ' },
+        }, 
     {'diagnostics',
-
-
-
-
-           color = {
-           bg = GetHiVal('signcolumn', 'bg')},
-
-  sources = { 'nvim_diagnostic', 'coc' },
-  symbols = { error = ' ', warn = ' ', info = ' ' },
-  -- diagnostics_color = {
-  --   color_error = { fg = colors.red },
-  --   color_warn = { fg = colors.yellow },
-  --   color_info = { fg = colors.cyan },
-
-},
+        color = {
+            bg = GetHiVal('signcolumn', 'bg')},
+            sources = { 'nvim_diagnostic', 'coc' },
+            symbols = { error = ' ', warn = ' ', info = ' ' },
+    },
 {
     function()
     -- count the number times the word 'TODO:' appears in the current buffer
@@ -374,126 +340,163 @@ require('lualine').setup {
     return todo.total > 0 and ' ' .. todo.total or ''
     end,
     color = {
-           bg = GetHiVal('signcolumn', 'bg'),
-           fg = GetHiVal('diagnosticinfo', 'fg')
-           },
- 
-
-
-}
-},
-    lualine_c = {
-        {'filename',
-            path = 3,
-            symbols = { modified = '✏️', readonly = '🔒' },
-            -- show in red if modified
-            color = function()
-                if vim.bo.modified then
-                    return { fg = GetHiVal('errormsg', 'fg') }
-                end
-            end,
+        bg = GetHiVal('signcolumn', 'bg'),
+        fg = GetHiVal('diagnosticinfo', 'fg')
         },
-        {
-                'filesize',
+                            }
+                            },
+                        lualine_c = {
+                            {'filename',
+                                path = 3,
+                                symbols = { modified = '', readonly = '' },
+                                -- show in red if modified
+                                color = function()
+                                if vim.bo.modified then
+                                    return { fg = GetHiVal('errormsg', 'fg') }
+                                    end
+                                    end,
+                            },
+                            {
+                                    'filesize',
+                            },
+                            {
+                                    'searchcount',
+                                    fmt = function()
+                                    -- show the search symbol, search term, current match and total matches
+                                    return ' \"' .. vim.fn.getreg('/') .. '\" ' .. vim.fn.searchcount().current .. '/' .. vim.fn.searchcount().total
+                                    end,
+                            },
+                            {
+                                    function() return '¶' end,
+                                    color = function ()
+                                    -- in white if hidden characters are on
+                                    -- in grey if hidden characters are off
+                                    if vim.wo.list then
+                                        return { fg = GetHiVal('statusline', 'fg') }
+                                    else
+                                        return { fg = GetHiVal('statuslineNC', 'fg') }
+                                        end
+                                        end,
+                            },
+                            {
+                                    -- display the fold method
+                                    function()
+                                    -- get the fold method from &l:fdm
+                                    local fdm = vim.opt.foldmethod:get()
+                                    --  local foldlevel = vim.opt.foldlevel:get()
+                                    return ' ' .. fdm
+                                    end,
+                            },
+                            {
+                                    function() return '暈' end,
+                                    color = function ()
+                                    local spell = vim.opt.spell:get()
+                                    if spell then
+                                        return { fg = GetHiVal('statusline', 'fg') }
+                                    else
+                                        return { fg = GetHiVal('statuslineNC', 'fg') }
+                                        end
+                                        end,
+                            },
+                        },
+                    lualine_x = {
+                        { 'encoding',
+                            color = {fg = GetHiVal('signcolumn', 'fg'),
+                            bg = GetHiVal('signcolumn', 'bg')},
+                        },
+                        {'fileformat',
+                            color = {fg = GetHiVal('signcolumn', 'fg'),
+                            bg = GetHiVal('signcolumn', 'bg')},
+                        },
+                        {'filetype',
+                            color = {fg = GetHiVal('signcolumn', 'fg'),
+                            bg = GetHiVal('signcolumn', 'bg')},
+                        },
+                    },
+                lualine_y = {
+                    {'progress', 
+                        color = {fg = GetHiVal('signcolumn', 'fg'),
+                        bg = GetHiVal('signcolumn', 'bg')},
+                    },
+                },
+            lualine_z = {
+                {
+                        'location',
+                        color = {fg = GetHiVal('signcolumn', 'fg'),
+                        bg = GetHiVal('signcolumn', 'bg')},
+                        fmt = function(location)
+                        -- show in the format of character line/total lines
+                        local current_line = vim.fn.line('.')
+                        local total_lines = vim.fn.line('$')
+                        local character = vim.fn.col('.')
+                        return string.format('%d:%d/%d', character, current_line, total_lines)
+                        end,
+                },
+            },
         },
-    -- change the color of the filename if it is edited
-
-
+    inactive_sections = {
+        lualine_a = {},
+        lualine_b = {},
+        lualine_c = {'filename'},
+        lualine_x = {'location'},
+        lualine_y = {},
+        lualine_z = {}
         },
-    lualine_x = {{ 'encoding',
-    color = {fg = GetHiVal('signcolumn', 'fg'),
-           bg = GetHiVal('signcolumn', 'bg')},
-    },
-{'fileformat',
-color = {fg = GetHiVal('signcolumn', 'fg'),
-           bg = GetHiVal('signcolumn', 'bg')},
-},
-{'filetype',
-    color = {fg = GetHiVal('signcolumn', 'fg'),
-           bg = GetHiVal('signcolumn', 'bg')},
-    },
-    },
-    lualine_y = {
-        {'progress', 
-    color = {fg = GetHiVal('signcolumn', 'fg'),
-           bg = GetHiVal('signcolumn', 'bg')},
-    },
-},
+    tabline = {
+        lualine_a = {
+            { 'tabs',
+                mode = 2,
+                -- max length is full width of screen
+                max_length = function()
+                return vim.fn.winwidth(0)
+                end,
+                fmt = function(name, context)
+                -- Show + if buffer is modified in tab
+                local buflist = vim.fn.tabpagebuflist(context.tabnr)
+                local winnr = vim.fn.tabpagewinnr(context.tabnr)
+                local bufnr = buflist[winnr]
+                local mod = vim.fn.getbufvar(bufnr, '&mod')
+                return name .. (mod == 1 and '  ' or ' ')
+                end,
+                tabs_color = 
+                {
+                        active = {
+                            fg = GetHiVal('tabline', 'fg'),
+                            bg = GetHiVal('tabline', 'bg'),
+                            },
+                        inactive = {
+                            fg = GetHiVal('tablinesel', 'fg'), 
+                            bg = GetHiVal('tablinesel', 'bg'),
+                            },
+                },
+            },
+        },
+    lualine_b = {},
+    lualine_c = {},
+    lualine_x = {},
+    lualine_y = {},
     lualine_z = {
         {
-        'location',
-    color = {fg = GetHiVal('signcolumn', 'fg'),
-           bg = GetHiVal('signcolumn', 'bg')},
-           fmt = function(location)
-           -- show in the format of character line/total lines
-           local current_line = vim.fn.line('.')
-           local total_lines = vim.fn.line('$')
-           local character = vim.fn.col('.')
-           return string.format('%d:%d/%d', character, current_line, total_lines)
-           end,
-           },
-
-
-
+                -- show the total number of open buffers
+                function()
+                return ' ' .. vim.fn.len(vim.fn.getbufinfo({buflisted = 1}))
+                end,
+                -- set the color to the same as the statusline
+                color = {fg = GetHiVal('statusline', 'fg'),
+                bg = GetHiVal('statusline', 'bg')},
+        },
     },
-  },
-  inactive_sections = {
-    lualine_a = {},
-    lualine_b = {},
-    lualine_c = {'filename'},
-    lualine_x = {'location'},
-    lualine_y = {},
-    lualine_z = {}
-  },
-  tabline = {
+},
 
-  lualine_a = {
-      { 'tabs',
-          mode = 2,
-          -- max length is full width of screen
-          max_length = function()
-              return vim.fn.winwidth(0)
-          end,
-
-          fmt = function(name, context)
-        -- Show + if buffer is modified in tab
-        local buflist = vim.fn.tabpagebuflist(context.tabnr)
-        local winnr = vim.fn.tabpagewinnr(context.tabnr)
-        local bufnr = buflist[winnr]
-        local mod = vim.fn.getbufvar(bufnr, '&mod')
-
-        return name .. (mod == 1 and ' ✏️ ' or ' ')
-      end,
-      
-             tabs_color = 
-             {
-                      active = {
-                        fg = GetHiVal('tabline', 'fg'),
-                        bg = GetHiVal('tabline', 'bg'),
-                          },
-                      inactive = {
-                        fg = GetHiVal('tablinesel', 'fg'), 
-                        bg = GetHiVal('tablinesel', 'bg'),
-
-                          },
-             },
-
-      }},
-  lualine_b = {},
-  lualine_c = {},
-  lualine_x = {},
-  lualine_y = {},
-  lualine_z = {}
-
-      },
-  winbar = {},
-  inactive_winbar = {},
-  extensions = {'fern', 'fugitive', 'fzf'}
+    winbar = {},
+    inactive_winbar = {},
+    extensions = {'fern', 'fugitive', 'fzf'}
 }
 
 EOF
 
 " }}}
+
 " {{{ setup more lua plugins
 
 lua << EOF
