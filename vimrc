@@ -223,6 +223,10 @@ Plug 'sickill/vim-monokai'
 " lualine for statusline and tabline
 Plug 'nvim-lualine/lualine.nvim'
 
+" replaces and improves upon matchit.vim
+" which is included with vim
+Plug 'andymass/vim-matchup'
+
 " All plugins must be added before the following line
 call plug#end()
 " }}}
@@ -753,7 +757,6 @@ filetype on
 filetype plugin indent on
 filetype plugin on
 set smartindent
-runtime macros/matchit.vim
 set t_Co=256
 "set term=xterm-256color
 "Set the colorscheme
