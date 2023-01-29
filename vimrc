@@ -156,7 +156,7 @@ Plug 'olacin/telescope-gitmoji.nvim'
 Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
 
 " syntax highlighting for many languages
-Plug 'sheerun/vim-polyglot'
+" Plug 'sheerun/vim-polyglot'
 
 " this is for reading GPG encrypted files
 Plug 'jamessan/vim-gnupg'
@@ -298,146 +298,156 @@ local function GetHiVal(name, layer)
 end
 
 require('lualine').setup {
-    options = {
-        icons_enabled = true,
-        theme = 'auto',
-        component_separators = { left = '', right = ''},
-        section_separators = { left = '', right = ''},
-        disabled_filetypes = {
-            statusline = {},
-            winbar = {},
-            },
-        ignore_focus = {},
-        always_divide_middle = true,
-        globalstatus = false,
-        refresh = {
-            statusline = 1000,
-            tabline = 1000,
-            winbar = 1000,
-            }
-        },
-    sections = {
-        lualine_a = {'mode'},
-        lualine_b = {
-            {'branch',
-                icon = '',
-                -- colors are the highlight group for statusline
-                color = {fg = GetHiVal('statusline', 'fg'),
-                bg = GetHiVal('statusline', 'bg')},
-            },
-        {'diff',
-            color = {
-                bg = GetHiVal('signcolumn', 'bg')},
-                symbols = { added = ' ', modified = '柳 ', removed = ' ' },
-        }, 
-    {'diagnostics',
-        color = {
-            bg = GetHiVal('signcolumn', 'bg')},
-            sources = { 'nvim_diagnostic', 'coc' },
-            symbols = { error = ' ', warn = ' ', info = ' ' },
+  options = {
+    icons_enabled = true,
+    theme = 'auto',
+    component_separators = { left = '', right = ''},
+    section_separators = { left = '', right = ''},
+    disabled_filetypes = {
+      statusline = {},
+      winbar = {},
+      },
+    ignore_focus = {},
+    always_divide_middle = true,
+    globalstatus = false,
+    refresh = {
+      statusline = 1000,
+      tabline = 1000,
+      winbar = 1000,
+      }
     },
-{
-    function()
-    -- count the number times the word 'TODO:' appears in the current buffer
-    local todo = vim.fn.searchcount({pattern = 'TODO:', flags = 'c'})
-    -- return the count if it's greater than 0
-    return todo.total > 0 and ' ' .. todo.total or ''
-    end,
+  sections = {
+    lualine_a = {'mode'},
+    lualine_b = {
+      {'branch',
+        icon = '',
+        -- colors are the highlight group for statusline
+        color = {fg = GetHiVal('statusline', 'fg'),
+        bg = GetHiVal('statusline', 'bg')},
+      },
+    {'diff',
+      color = {
+        bg = GetHiVal('signcolumn', 'bg')},
+        symbols = { added = ' ', modified = '柳 ', removed = ' ' },
+    }, 
+  {'diagnostics',
     color = {
-        bg = GetHiVal('signcolumn', 'bg'),
-        fg = GetHiVal('diagnosticinfo', 'fg')
+      bg = GetHiVal('signcolumn', 'bg')},
+      sources = { 'nvim_diagnostic', 'coc' },
+      symbols = { error = ' ', warn = ' ', info = ' ' },
+      },
+    {
+        function()
+        -- count the number times the word 'TODO:' appears in the current buffer
+        local todo = vim.fn.searchcount({pattern = 'TODO:', flags = 'c'})
+        -- return the count if it's greater than 0
+        return todo.total > 0 and ' ' .. todo.total or ''
+        end,
+        color = {
+          bg = GetHiVal('signcolumn', 'bg'),
+          fg = GetHiVal('diagnosticinfo', 'fg')
+          },
+  }
+  },
+lualine_c = {
+  {'filename',
+    path = 3,
+    symbols = { modified = '', readonly = '' },
+    -- show in red if modified
+    color = function()
+    if vim.bo.modified then
+      return { fg = GetHiVal('errormsg', 'fg') }
+      end
+      end,
+  },
+  {
+      'filesize',
+  },
+      {
+          'searchcount',
+            fmt = function()
+            -- show the search symbol, search term, current match and total matches
+            return ' \"' .. vim.fn.getreg('/') .. '\" ' .. vim.fn.searchcount().current .. '/' .. vim.fn.searchcount().total
+            end,
         },
-                            }
-                            },
-                        lualine_c = {
-                            {'filename',
-                                path = 3,
-                                symbols = { modified = '', readonly = '' },
-                                -- show in red if modified
-                                color = function()
-                                if vim.bo.modified then
-                                    return { fg = GetHiVal('errormsg', 'fg') }
-                                    end
-                                    end,
-                            },
-                            {
-                                    'filesize',
-                            },
-                            {
-                                    'searchcount',
-                                    fmt = function()
-                                    -- show the search symbol, search term, current match and total matches
-                                    return ' \"' .. vim.fn.getreg('/') .. '\" ' .. vim.fn.searchcount().current .. '/' .. vim.fn.searchcount().total
-                                    end,
-                            },
-                            {
-                                    function() return '¶' end,
-                                    color = function ()
-                                    -- in white if hidden characters are on
-                                    -- in grey if hidden characters are off
-                                    if vim.wo.list then
-                                        return { fg = GetHiVal('statusline', 'fg') }
-                                    else
-                                        return { fg = GetHiVal('statuslineNC', 'fg') }
-                                        end
-                                        end,
-                            },
-                            {
-                                    -- display the fold method
-                                    function()
-                                    -- get the fold method from &l:fdm
-                                    local fdm = vim.opt.foldmethod:get()
-                                    --  local foldlevel = vim.opt.foldlevel:get()
-                                    return ' ' .. fdm
-                                    end,
-                            },
-                            {
-                                    function() return '暈' end,
-                                    color = function ()
-                                    local spell = vim.opt.spell:get()
-                                    if spell then
-                                        return { fg = GetHiVal('statusline', 'fg') }
-                                    else
-                                        return { fg = GetHiVal('statuslineNC', 'fg') }
-                                        end
-                                        end,
-                            },
-                        },
-                    lualine_x = {
-                        { 'encoding',
-                            color = {fg = GetHiVal('signcolumn', 'fg'),
-                            bg = GetHiVal('signcolumn', 'bg')},
-                        },
-                        {'fileformat',
-                            color = {fg = GetHiVal('signcolumn', 'fg'),
-                            bg = GetHiVal('signcolumn', 'bg')},
-                        },
-                        {'filetype',
-                            color = {fg = GetHiVal('signcolumn', 'fg'),
-                            bg = GetHiVal('signcolumn', 'bg')},
-                        },
-                    },
-                lualine_y = {
-                    {'progress', 
-                        color = {fg = GetHiVal('signcolumn', 'fg'),
-                        bg = GetHiVal('signcolumn', 'bg')},
-                    },
-                },
-            lualine_z = {
-                {
-                        'location',
-                        color = {fg = GetHiVal('signcolumn', 'fg'),
-                        bg = GetHiVal('signcolumn', 'bg')},
-                        fmt = function(location)
-                        -- show in the format of character line/total lines
-                        local current_line = vim.fn.line('.')
-                        local total_lines = vim.fn.line('$')
-                        local character = vim.fn.col('.')
-                        return string.format('%d:%d/%d', character, current_line, total_lines)
-                        end,
-                },
-            },
+        {
+            function() return '¶' end,
+            color = function ()
+            -- in white if hidden characters are on
+            -- in grey if hidden characters are off
+            if vim.wo.list then
+              return { fg = GetHiVal('statusline', 'fg') }
+            else
+              return { fg = GetHiVal('statuslineNC', 'fg') }
+              end
+              end,
         },
+        {
+            -- display the fold method
+            function()
+            -- get the fold method from &l:fdm
+            local fdm = vim.opt.foldmethod:get()
+            --  local foldlevel = vim.opt.foldlevel:get()
+            return ' ' .. fdm
+            end,
+        },
+        {
+            function() return '暈' end,
+            color = function ()
+            local spell = vim.opt.spell:get()
+            if spell then
+              return { fg = GetHiVal('statusline', 'fg') }
+            else
+              return { fg = GetHiVal('statuslineNC', 'fg') }
+              end
+              end,
+              -- on_click only works in nvim >0.8
+              --  on_click = function()
+              --  -- toggle spell checking
+              --  vim.opt.spell:toggle()
+              --  end,
+        },
+        },
+    lualine_x = {
+      {
+
+'v:this_session',
+
+
+
+        }
+
+
+      },
+      lualine_y = {
+        { 'encoding',
+          color = {fg = GetHiVal('signcolumn', 'fg'),
+          bg = GetHiVal('signcolumn', 'bg')},
+        },
+        {'fileformat',
+          color = {fg = GetHiVal('signcolumn', 'fg'),
+          bg = GetHiVal('signcolumn', 'bg')},
+        },
+        {'filetype',
+          color = {fg = GetHiVal('signcolumn', 'fg'),
+          bg = GetHiVal('signcolumn', 'bg')},
+        },
+      },
+    lualine_z = {
+      {
+          'location',
+          color = {fg = GetHiVal('signcolumn', 'fg'),
+          bg = GetHiVal('signcolumn', 'bg')},
+          fmt = function(location)
+          -- show in the format of character line/total lines
+          local current_line = vim.fn.line('.')
+          local total_lines = vim.fn.line('$')
+          local character = vim.fn.col('.')
+          return string.format('%d:%d/%d', character, current_line, total_lines)
+          end,
+      },
+    },
+  },
     inactive_sections = {
         lualine_a = {},
         lualine_b = {},
@@ -719,6 +729,7 @@ xmap ic <Plug>(coc-git-chunk-inner)
 omap ac <Plug>(coc-git-chunk-outer)
 xmap ac <Plug>(coc-git-chunk-outer)
 
+"use dp to stage chunks when not in diff mode
 nnoremap <expr> dp &diff ? 'dp' : ':CocCommand git.chunkStage<cr>'
 
 " navigate jumplist
@@ -751,43 +762,36 @@ endif
 " }}}
 " More Settings {{{
 
-"disable plugin maps that slow down my own
-"let g:gitgutter_map_keys=0
 filetype on
 filetype plugin indent on
 filetype plugin on
-set smartindent
 set t_Co=256
 "set term=xterm-256color
 "Set the colorscheme
 colorscheme challenger_deep
-"colorscheme miamineon
-"colorscheme tokyonight
 set background=dark
 
-" open help windows in vertical split
-" on the left by default
-" autocmd FileType help wincmd H
-
 augroup bufenter
-    autocmd!
-    " if the file is not contained in the working directory
-    " then change the working directory to the file's directory
-    autocmd BufEnter * if expand('%:p') !~# getcwd() | lcd %:p:h | endif
+  autocmd!
+  " if the file is not contained in the working directory
+  " then change the working directory to the file's directory
+  autocmd BufEnter * if expand('%:p') !~# getcwd() | lcd %:p:h | endif
 augroup END
 
 augroup commit
-    autocmd!
-    " if the buffer is a new commit message buffer then open Telescope gitmoji
-    autocmd BufEnter *.git/COMMIT_EDITMSG if !exists('b:entered') |
-                \ let b:entered = 1 |
-                \ set colorcolumn=72 |
-                \ execute 'Telescope gitmoji' |
-                \ endif
+  autocmd!
+  " if the buffer is a new commit message buffer then open Telescope gitmoji
+  autocmd BufEnter *.git/COMMIT_EDITMSG if !exists('b:entered') |
+        \ let b:entered = 1 |
+        \ set colorcolumn=72 |
+        \ execute 'Telescope gitmoji' |
+        \ endif
 augroup END
 
 autocmd FileType markdown set conceallevel=3
-set foldmethod=marker
+" set foldmethod=marker
+
+" settings for indent guides plugin
 let g:indent_guides_enable_on_vim_startup = 1
 let g:indent_guides_default_mapping = 0
 let g:indent_guides_start_level=2
@@ -801,30 +805,20 @@ autocmd FileType php setlocal commentstring=//\ %s
 " use updatetime instead if not defined
 let g:cursorhold_updatetime = 100
 
+" key maps to resize splits
 nnoremap <tab><Up> <C-w>+<C-w>+<C-w>+<C-w>+<C-w>+
 nnoremap <tab><Down> <C-w>-<C-w>-<C-w>-<C-w>-<C-w>-
 nnoremap <tab><Left> <C-w><<C-w><<C-w><<C-w><<C-w><
 nnoremap <tab><Right> <C-w>><C-w>><C-w>><C-w>><C-w>>
 
+" toggle list mode (hidden characters)
 nnoremap <leader>- :set list!<CR>
 
 " map backspace to go back to last buffer
 nnoremap <bs> <C-^>
-" allow the cursor to be in positions where there is no character
-set virtualedit=insert
-"vmap <unique> <up>    <Plug>SchleppUp
-"vmap <unique> <down>  <Plug>SchleppDown
-"vmap <unique> <left>  <Plug>SchleppLeft
-"vmap <unique> <right> <Plug>SchleppRight
-"vmap <unique> D <Plug>SchleppDup
-"
-" save the current working directory in a variable on startup
-" so that it can be restored later
-let g:cwd = getcwd()
-" restore the working directory when vim is closed
-autocmd VimLeave * lcd g:cwd
 
 " }}}
+
 " Startify {{{
 let g:startify_change_to_vcs_root = 1
 let g:startify_change_cmd = 'lcd'
@@ -860,75 +854,61 @@ let g:startify_lists = [
             \ ]
 " }}}
 " Fern {{{
-"let g:fern#default_exclude = '\tags'
 let g:fern#renderer = "nerdfont"
-"let g:fern#disable_default_mappings = 1
-""<C-w>=
-"Start fern.vim on Vim startup with current directory
-""augroup my-fern-startup
-""	autocmd! *
-""	autocmd VimEnter * ++nested Fern -drawer -toggle -reveal=% -width=25 .
-""augroup END
 
 "custom mappings
 function! FernInit() abort
-    nmap <buffer><expr>
-                \ <Plug>(fern-my-open-expand-collapse)
-                \ fern#smart#leaf(
-                \   "\<Plug>(fern-action-open:select)",
-                \   "\<Plug>(fern-action-expand)",
-                \   "\<Plug>(fern-action-collapse)",
-                \ )
-    nmap <buffer> <CR> <Plug>(fern-my-open-expand-collapse)
-    nmap <buffer> <2-LeftMouse> <Plug>(fern-my-open-expand-collapse)
-    nmap <buffer> N <Plug>(fern-action-new-path)
-    nmap <buffer> r <Plug>(fern-action-reload)
-    nmap <buffer> <C-o> <Plug>(fern-action-open:split)
-    nmap <buffer> <C-e> <Plug>(fern-action-open:vsplit)
-    nmap <buffer> <C-t> <Plug>(fern-action-open:tabedit)
-    "Perform tcd on the root node after enter or leave action
-    nmap <buffer> <Plug>(fern-my-enter-and-tcd)
-                \ <Plug>(fern-action-enter)
-                \ <Plug>(fern-wait)
-                \ <Plug>(fern-action-tcd:root)
-                \ <Plug>(fern-action-lcd:root)
-    nmap <buffer> <Plug>(fern-my-leave-and-tcd)
-                \ <Plug>(fern-action-leave)
-                \ <Plug>(fern-wait)
-                \ <Plug>(fern-action-tcd:root)
-                \ <Plug>(fern-action-lcd:root)
-    nmap <buffer> > <Plug>(fern-my-enter-and-tcd)
-    nmap <buffer> < <Plug>(fern-my-leave-and-tcd)
-    " nmap <buffer> p     <Plug>(fern-action-preview:toggle)
-    ""nmap <buffer> <C-p> <Plug>(fern-action-preview:auto:toggle)
-    ""nmap <buffer> <C-d> <Plug>(fern-action-preview:scroll:down:half)
-    ""nmap <buffer> <C-u> <Plug>(fern-action-preview:scroll:up:half)
-    " Use 'select' instead of 'edit' for default 'open' action
-    nmap <buffer> <Plug>(fern-action-open) <Plug>(fern-action-open:select)
-    nmap <silent> <buffer> p <Plug>(fern-action-preview:auto:toggle)
-    " nmap <buffer> mi <Plug>(fern-action-rename):call MoveToIdeas()
-    nmap <buffer> U <Plug>(fern-action-rename)aUnsorted/<ESC>:w<CR>
-    nmap <buffer> J <Plug>(fern-action-rename)aJokes/<ESC>:w<CR>
-    " nmap <buffer> m :Maps<CR>init.vim fern-action-rename m
-    " nmap <buffer> m <Plug>(fern-action-move)
+  nmap <buffer><expr>
+        \ <Plug>(fern-my-open-expand-collapse)
+        \ fern#smart#leaf(
+        \   "\<Plug>(fern-action-open:select)",
+        \   "\<Plug>(fern-action-expand)",
+        \   "\<Plug>(fern-action-collapse)",
+        \ )
+  nmap <buffer> <CR> <Plug>(fern-my-open-expand-collapse)
+  nmap <buffer> <2-LeftMouse> <Plug>(fern-my-open-expand-collapse)
+  nmap <buffer> N <Plug>(fern-action-new-path)
+  nmap <buffer> r <Plug>(fern-action-reload)
+  nmap <buffer> <C-o> <Plug>(fern-action-open:split)
+  nmap <buffer> <C-e> <Plug>(fern-action-open:vsplit)
+  nmap <buffer> <C-t> <Plug>(fern-action-open:tabedit)
+  "Perform tcd on the root node after enter or leave action
+  nmap <buffer> <Plug>(fern-my-enter-and-tcd)
+        \ <Plug>(fern-action-enter)
+        \ <Plug>(fern-wait)
+        \ <Plug>(fern-action-tcd:root)
+        \ <Plug>(fern-action-lcd:root)
+  nmap <buffer> <Plug>(fern-my-leave-and-tcd)
+        \ <Plug>(fern-action-leave)
+        \ <Plug>(fern-wait)
+        \ <Plug>(fern-action-tcd:root)
+        \ <Plug>(fern-action-lcd:root)
+  nmap <buffer> > <Plug>(fern-my-enter-and-tcd)
+  nmap <buffer> < <Plug>(fern-my-leave-and-tcd)
+  " nmap <buffer> p     <Plug>(fern-action-preview:toggle)
+  ""nmap <buffer> <C-p> <Plug>(fern-action-preview:auto:toggle)
+  ""nmap <buffer> <C-d> <Plug>(fern-action-preview:scroll:down:half)
+  ""nmap <buffer> <C-u> <Plug>(fern-action-preview:scroll:up:half)
+  " Use 'select' instead of 'edit' for default 'open' action
+  nmap <buffer> <Plug>(fern-action-open) <Plug>(fern-action-open:select)
+  nmap <silent> <buffer> p <Plug>(fern-action-preview:auto:toggle)
+  " nmap <buffer> mi <Plug>(fern-action-rename):call MoveToIdeas()
+  nmap <buffer> U <Plug>(fern-action-rename)aUnsorted/<ESC>:w<CR>
+  nmap <buffer> J <Plug>(fern-action-rename)aJokes/<ESC>:w<CR>
+  " nmap <buffer> m :Maps<CR>init.vim fern-action-rename m
+  " nmap <buffer> m <Plug>(fern-action-move)
 endfunction
 
 augroup FernGroup
-    autocmd!
-    autocmd FileType fern call FernInit()
+  autocmd!
+  autocmd FileType fern call FernInit()
 augroup END
 "glyph-palette  colours
 augroup my-glyph-palette
-    autocmd! *
-    autocmd FileType fern call glyph_palette#apply()
-    autocmd FileType nerdtree,startify call glyph_palette#apply()
+  autocmd! *
+  autocmd FileType fern call glyph_palette#apply()
+  autocmd FileType nerdtree,startify call glyph_palette#apply()
 augroup END
-
-" function! s:fern_settings() abort
-"     nmap <silent> <buffer> <expr> <Plug>(fern-quit-or-close-preview) fern_preview#smart_preview("\<Plug>(fern-action-preview:close)", ":q\<CR>")
-"     nmap <silent> <buffer> q <Plug>(fern-quit-or-close-preview)
-" endfunction
-""
 
 " this should be in the fern preview source code but it's not
 " getting set, so I added it here to avoid an error message
@@ -939,37 +919,22 @@ if !exists('g:fern_preview_window_highlight')
         let g:fern_preview_window_highlight = 'Normal'
     endif
 endif
-"
-
-" function! s:fern_settings() abort
-"     nmap <silent> <buffer> p     <Plug>(fern-action-preview:toggle)
-"     nmap <silent> <buffer> <C-p> <Plug>(fern-action-preview:auto:toggle)
-"     nmap <silent> <buffer> <C-d> <Plug>(fern-action-preview:scroll:down:half)
-"     nmap <silent> <buffer> <C-u> <Plug>(fern-action-preview:scroll:up:half)
-" endfunction
-
-" augroup fern-settings
-"     autocmd!
-"     autocmd FileType fern call s:fern_settings()
-" augroup END
 
 " test if the current working directory contains the current file
 " if it does, then open fern in the current working directory
 " if it doesn't, then open fern in the directory of the current file
 " and switch to the directory of the current file
 function! OpenFern() abort
-    if expand('%:p') =~ getcwd()
-        execute 'Fern -drawer -toggle -reveal=% -width=25 .'
-    else
-        execute 'lcd ' . expand('%:p:h')
-        execute 'Fern -drawer -toggle -reveal=% -width=25 ' . expand('%:p:h')
-    endif
+  if expand('%:p') =~ getcwd()
+    execute 'Fern -drawer -toggle -reveal=% -width=25 .'
+  else
+    execute 'lcd ' . expand('%:p:h')
+    execute 'Fern -drawer -toggle -reveal=% -width=25 ' . expand('%:p:h')
+  endif
 endfunction
 
 "toggle fern with <leader> f
 nnoremap <silent> <leader>f :call OpenFern()<CR>
-
-""nnoremap <Leader>f :Fern %:h -drawer -width=30 -toggle <CR>
 
 " }}}
 
@@ -978,68 +943,80 @@ nnoremap <silent> <leader>f :call OpenFern()<CR>
 " open in splits and new tabs with Ctrl t/o/e/q
 " Tab/hOrizontal/vErtical/Quickfix
 let g:fzf_action = {
-            \ 'ctrl-t': 'tab split',
-            \ 'ctrl-o': 'split',
-            \ 'ctrl-e': 'vsplit',
-            \ }
+      \ 'ctrl-t': 'tab split',
+      \ 'ctrl-o': 'split',
+      \ 'ctrl-e': 'vsplit',
+      \ }
 command! -bang -nargs=* GGrep
-            \ call fzf#vim#grep(
-            \   'git grep --line-number -- '.shellescape(<q-args>), 0,
-            \   fzf#vim#with_preview({'dir': systemlist('git rev-parse --show-toplevel')[0]}), <bang>0)
+      \ call fzf#vim#grep(
+      \   'git grep --line-number -- '.shellescape(<q-args>), 0,
+      \   fzf#vim#with_preview({'dir': systemlist('git rev-parse --show-toplevel')[0]}), <bang>0)
+
 " search file names
 nnoremap  <leader>s :Files<CR>
+
 " search inside files
 nnoremap <Leader>i :RG<CR>
+
 " search buffers
-nnoremap <Leader>b :Buffers<CR>
+" nnoremap <Leader>b :Buffers<CR>
+nnoremap <leader>b :CocCommand fzf-preview.AllBuffers<CR>
+
+
 " search in current buffer
 nnoremap  <Leader>/ :BLines<CR>
+
 " search help
 nnoremap  <Leader>h :Helptags<CR>
+
 " history of Recently opened files
 nnoremap  <Leader>r :History<CR>
+
 " search for my own mapped commands
 nnoremap  <Leader>m :Maps<CR>^<space
+
 " use ripgrep instead of grep by default in vim
 set grepprg=rg\ --vimgrep\ --smart-case\ --follow
-"""""""""""""""""
+
 " make :Rg only search for file contents, not file names as well
 command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
-""""""""""""""""""
-""""better ripgrep integration, call RG instead of Rg
+
+"better ripgrep integration, call RG instead of Rg
 function! RipgrepFzf(query, fullscreen)
-    let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
-    let initial_command = printf(command_fmt, shellescape(a:query))
-    let reload_command = printf(command_fmt, '{q}')
-    let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
-    call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+  let initial_command = printf(command_fmt, shellescape(a:query))
+  let reload_command = printf(command_fmt, '{q}')
+  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
 endfunction
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 
-"""" [Buffers] Jump to the existing window if possible
+" [Buffers] Jump to the existing window if possible
 let g:fzf_buffers_jump = 1
 let g:fzf_layout = { 'window': { 'width': 0.8, 'height': 0.8, 'border': 'sharp'} }
-"""" Customize fzf colors to match your color scheme
+
+" Customize fzf colors to match your color scheme
 let g:fzf_colors =
-            \ { 'fg':      ['fg', 'Normal'],
-            \ 'bg':      ['bg', 'Normal'],
-            \ 'hl':      ['fg', 'Comment'],
-            \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-            \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-            \ 'hl+':     ['fg', 'Statement'],
-            \ 'info':    ['fg', 'PreProc'],
-            \ 'border':  ['fg', 'Ignore'],
-            \ 'prompt':  ['fg', 'Conditional'],
-            \ 'pointer': ['fg', 'Exception'],
-            \ 'marker':  ['fg', 'Keyword'],
-            \ 'spinner': ['fg', 'Label'],
-            \ 'header':  ['fg', 'Comment'] }
+      \ { 'fg':      ['fg', 'Normal'],
+      \ 'bg':      ['bg', 'Normal'],
+      \ 'hl':      ['fg', 'Comment'],
+      \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+      \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+      \ 'hl+':     ['fg', 'Statement'],
+      \ 'info':    ['fg', 'PreProc'],
+      \ 'border':  ['fg', 'Ignore'],
+      \ 'prompt':  ['fg', 'Conditional'],
+      \ 'pointer': ['fg', 'Exception'],
+      \ 'marker':  ['fg', 'Keyword'],
+      \ 'spinner': ['fg', 'Label'],
+      \ 'header':  ['fg', 'Comment'] }
 
 " }}}
 
 " Vista and tags stuff {{{
-nnoremap <leader>v :Vista!!<CR>
-"nnoremap <leader>t :Vista finder<CR>
+
+" nnoremap <leader>v :Vista!!<CR>
+nnoremap <leader>v :Vista finder<CR>
 let g:vista_fzf_preview = ['right:50%']
 let g:vista_keep_fzf_colors = 1
 let g:vista_default_executive = 'coc'
@@ -1056,45 +1033,9 @@ let g:vista_vimwiki_executive = 'markdown'
 " nnoremap <leader>o :Vista finder coc<CR>
 " nnoremap  <Leader>o :BTags<CR>
 nnoremap <leader>o <C-u>:CocFzfList outline<CR>
+
 " }}}
 
-" lsp-vim {{{
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"nnoremap <leader>l :LspHover<CR>
-"highlight lspReference ctermfg=red guifg=red ctermbg=green guibg=green
-"let g:lsp_diagnostics_echo_cursor = 1
-"let g:lsp_diagnostics_float_cursor = 1
-"move focus to preview window
-let g:lsp_preview_keep_focus = 0
-"let g:lsp_hover_conceal = 0
-let g:lsp_semantic_enabled = 1
-highlight link lspReference Underlined
-"highlight link LspErrorHighlight Error
-"highlight link LspWarningHighlight Error
-"highlight link LspInformationHighlight Error
-"highlight link LspHintHighlight Error
-highlight link LspErrorVirtualText Error
-highlight link LspWarningVirtualText Error
-highlight link LspInformationVirtualText Error
-highlight link LspHintVirtualText Error
-"""LSP delays
-""defaults to 80
-let g:lsp_completion_documentation_delay = 0
-"""all these default to 500
-let g:lsp_diagnostics_echo_delay = 0
-let g:lsp_diagnostics_float_delay = 0
-let g:lsp_diagnostics_highlights_delay = 0
-let g:lsp_diagnostics_signs_delay = 0
-let g:lsp_diagnostics_virtual_text_delay = 0
-let g:lsp_document_code_action_signs_delay = 0
-"defaults to 350
-let g:lsp_document_highlight_delay = 0
-"defaults to 200
-let g:lsp_signature_help_delay = 0
-"" }}}
-" Gutentags {{{
-"set statusline+=%{gutentags#statusline()}
-"" }}}
 " Tab Bar {{{
 
 " set mappings to switch tabs
@@ -1109,54 +1050,69 @@ nnoremap <leader>8 :tabn 8<CR>
 nnoremap <leader>9 :tabn 9<CR>
 
 " }}}
+
 " Vim Wiki {{{
 let g:vimwiki_list = [{'path': '~/Notes/',
-            \ 'syntax': 'markdown', 'auto_toc' : 1,
-            \ 'index': '!Index',
-            \ 'ext': '.md'}]
+      \ 'syntax': 'markdown', 'auto_toc' : 1,
+      \ 'index': '!Index',
+      \ 'ext': '.md'}]
 
-"let g:vimwiki_table_mappings = 0
 let g:vimwiki_key_mappings = { 'headers': 0,
-            \ 'table_mappings': 0,
-            \ 'global': 0}
-"nnoremap <buffer> <CR> <Plug>VimwikiFollowLink
-"nnoremap <buffer> <C-o> <Plug>VimwikiSplitLink
-"nnoremap <buffer> <C-e> <Plug>VimwikiVSplitLink
-" nnoremap <buffer> <C-t> <Plug>VimwikiTabnewLink
-"nnoremap <buffer> <leader><Backspace> <Plug>VimwikiGoBackLink
+      \ 'table_mappings': 0,
+      \ 'global': 0}
 
 nnoremap <leader>w :VimwikiTabIndex<CR>:tcd %:p:h<CR>:TabooRename Vimwiki Notes<CR>:tabm 0<CR>
 
 let g:vimwiki_folding = 'custom'
 
-""command! -nargs=1 N call NewNote(<args>)
-""function NewNote()
-""
-""endfunction
+nnoremap <leader><leader> :call NewNote()<CR>
+
+" create a new note
+" usage: <leader><leader> <note name>
+" example: <leader><leader> my_note
+" will create a new note called my_note.md in the ~/Notes/ directory
+" and open it in a new tab
+" if the note already exists, it will just open it in a new tab
+function! NewNote()
+  let note_name = input('Note Name: ')
+  " if the user didn't enter anything, exit
+  " or if the user entered only whitespace, exit
+  if note_name ==# '' || note_name =~# '^\s*$'
+    return
+  endif
+
+  " remove trailing whitespace
+  " and replace spaces with hyphens
+  " and remove any non-alphanumeric characters
+  " and convert to lowercase
+  " and remove leading and trailing hyphens
+  let note_name = substitute(note_name, '\s\+$', '', '')
+  let note_name = substitute(note_name, '\s', '-', 'g')
+  let note_name = substitute(note_name, '[^a-zA-Z0-9-]', '', 'g')
+  let note_name = tolower(note_name)
+  let note_name = substitute(note_name, '^-', '', '')
+  let note_name = substitute(note_name, '-$', '', '')
+
+    let note_path = '~/Notes/' . note_name . '.md'
+    if filereadable(note_path)
+        execute 'tabedit ' . note_path
+    else
+        execute 'tabnew ' . note_path
+        execute 'normal! i# ' . note_name
+    endif
+endfunction
+
 " }}}
+
 " Preservim/tagbar settings {{{
 
 "Open/close tagbar with <leader>a
 nmap <leader>a :TagbarToggle<CR>
 
-" toggle fold in tagbar with `z`
-let g:tagbar_map_togglefold = "z"
-" Uncomment to open tagbar automatically whenever possible
-"autocmd BufEnter * nested :call tagbar#autoopen(0)
-
 " }}}
-" Raimondi/delimitMate settings {{{
 
-"let delimitMate_expand_cr = 1
-augroup mydelimitMate
-    au!
-    au FileType markdown let b:delimitMate_nesting_quotes = ["`"]
-    au FileType tex let b:delimitMate_quotes = ""
-    au FileType tex let b:delimitMate_matchpairs = "(:),[:],{:},`:'"
-    au FileType python let b:delimitMate_nesting_quotes = ['"', "'"]
-augroup END
-" }}}
 " Coc-nvim {{{
+
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
 
@@ -1197,18 +1153,18 @@ function! s:show_documentation()
         execute '!' . &keywordprg . " " . expand('<cword>')
     endif
 endfunction
+
 " Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
-" Symbol renaming.
-"nnoremap <leader>rn <Plug>(coc-rename)
-""""" coc-fzf
+
+" fuzzy search
 nnoremap <leader>c <C-u>:Telescope coc<CR>
-let g:coc_fzf_preview = 'right:50%'
-let g:coc_fzf_opts = []
+
 " let coc treat vimwiki files as md
 let g:coc_filetype_map = {
-            \ 'vimwiki': 'markdown',
-            \ }
+      \ 'vimwiki': 'markdown',
+      \ }
+
 " }}}
 
 " autocomplete coc + github copilot {{{
@@ -1217,31 +1173,20 @@ let g:coc_filetype_map = {
 inoremap <silent><expr> <right> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<right>"
 
 " }}}
+
 " Emojis {{{
-" Use emoji-fzf and fzf to fuzzy-search for emoji, and insert the result
-function! InsertEmoji(emoji)
-    let @a = system("awk '{ print \$1 }'", a:emoji)
-    normal! "apkgJ
-endfunction
-command! -bang Emoj
-            \ call fzf#run({
-            \ 'source': 'emoji-fzf preview --prepend',
-            \ 'sink': function('InsertEmoji')
-            \ })
-" Ctrl-e in normal and insert mode will open the emoji picker.
-" Unfortunately doesn't bring you back to insert mode 😕
-" map <C-e> :Emoj<CR>
-" imap <C-e> <C-o><C-e>
+
 " call emoji picker with <C-e> in insert mode
 imap <C-e> <cmd>lua require('telescope').extensions.emoji.emoji()<CR>
 
-" imap <C-e> <cmd>lua require'telescope.builtin'.symbols{ sources = {'emoji'} }<cr>
-" }}}
+" }}} 
+
 " Formatting {{{
+
 "" this deletes blank lines
 "" and blank trailing characters
 "" and indents stuff
-"" and formats it with LSP
+"" and formats it with coc
 "" if it's available
 fun! MyFormat()
     ""	normal e
@@ -1254,8 +1199,6 @@ fun! MyFormat()
     %s/\s\+$//e
     "remove carriage return characters
     %s/\n/\r/e
-    ""%s/\r/\r/e
-    ""%s//\r/e
     "remove multiple consecutive blank lines
     %s/\n\{3,}/\r\r/e
     "indent entire document
@@ -1264,24 +1207,32 @@ fun! MyFormat()
     silent! call CocAction('format')
     normal ``0zz
 endfun
+
 nnoremap <leader>= :call MyFormat()<cr>
 " }}}
+
 " Line Numbering {{{
+
 " switch on line numbering
 " this is on so that toggling relative line numbering leaves
 " normal line numbering instead of removing it completely
 set nu
+
 " switch on relative line numbering
 " this leaves absolute line numbering on for the current line
 set rnu
+
 " function to toggle the relative line numbering
 function! NumberToggle() abort
     set rnu!
 endfunction
 
 nnoremap <leader>n :call NumberToggle()<cr>
+
 " }}}
+
 "my diff function for two already open tabs {{{
+
 fun! Diff(x, y)
     execute 'tab sb' a:x
     execute 'diffthis'
@@ -1289,7 +1240,9 @@ fun! Diff(x, y)
     execute 'diffthis'
 endfunc
 " }}}
+
 " yanked text fills registers 0-9 {{{
+
 function! SaveLastReg()
     if v:event['regname']==""
         if v:event['operator']=='y'
@@ -1305,24 +1258,17 @@ function! SaveLastReg()
 endfunction
 
 autocmd TextYankPost * call SaveLastReg()
+
 " }}}
 
-"trying to highlight and indent files with
-"both html and php better
-"augroup filetypedetect
-""	au BufRead,BufNewFile *.php
-""	if search('div')>0 |
-""		set ft=phtml.html |
-""	endif
-" augroup END
-
 " Shortcuts/Remaps {{{
+
 "Shortcuts for git
 
-" open fugitive and twiggy to show git status
-"nnoremap <leader>g :vertical Git<CR>:Twiggy<CR>
 " open git actions in FZF window
 nnoremap <leader>g :CocCommand fzf-preview.GitActions<CR>
+
+" start diff mode
 nnoremap <leader>d :Gvdiffsplit<CR>:windo set foldmethod=manual<CR>:windo set foldlevel=20<CR>
 
 "navigate windows more easily
@@ -1332,7 +1278,9 @@ nnoremap <tab>k <C-w>k
 nnoremap <tab>l <C-w>l
 
 " }}}
+
 " Diff colors {{{
+
 " my preferred diff colors
 " it seems like a lot of color schemes
 " either look horrible in diff, or don't
@@ -1351,6 +1299,7 @@ function! Colors()
 endfunction
 
 " }}}
+
 " After {{{
 "This is called after all the plugins and
 "settings in this vimrc file are loaded
@@ -1367,9 +1316,21 @@ function! After()
         return width
     endfunction
 
+    " if no session is loaded
+    " then use the default session
+    " otherwise use the session that was loaded
+    if !exists('g:session_loaded')
+      if filereadable(expand('~/Session.vim'))
+        source ~/Session.vim
+      endif
+    endif
+
 endfunction
+
 " }}}
+
 " Setup {{{
+
 " This is a first time setup function
 " to install/configure LSP servers
 " and dependencies etcetera.
@@ -1394,9 +1355,9 @@ endfunction
 " manually install coc server
 " eg  :CocInstall coc-phpls
 " }}}
-" vim:fdm=marker
 
-" cnoreabbrev htm call HtmlToMarkdown()
+
+" convert html to markdown {{{
 function! HtmlToMarkdown()
     " -------------------
     " Generic markdownify
@@ -1428,36 +1389,14 @@ function! HtmlToMarkdown()
     " Markdownify blockquotes
     %s/<blockquote.\{-}>\n\?\(.\+\)\n\?<\/blockquote>/> \1\r\r/g
 
-    " -------------------------
-    " External sites shortcodes
-    " -------------------------
-
-    " Markdownify gists
-    %s/<script .\{-}\(gist\)\.github\.com\/\(.\{-}\)\/\(.\{-}\)\.js">\n\?<\/script>\s*\(<br \/>\)\?/{{< \1 \2 \3 >}}\r\r/g
-
-    " ---------------------------
-    " sw-samuraj.cz & clojure.cz specific changes
-    " ---------------------------
-
-    " Remove following prefix from links, plus .html suffix:
-    " * //sw-samuraj.cz
-    " * //www.sw-samuraj.cz
-    " * http://sw-samuraj.cz
-    " * https://sw-samuraj.cz
-    " * http://www.sw-samuraj.cz
-    " * https://www.sw-samuraj.cz
-    %s/(\(https\?:\)\?\/\/\(w\{3}\.\)\?sw-samuraj\.cz\(\/.\{-}\)\.html)/(\3\/)/cg
-    " Remove following prefix from links, plus .html suffix:
-    " * //clojure.cz
-    " * //www.clojure.cz
-    " * http://clojure.cz
-    " * https://clojure.cz
-    " * http://www.clojure.cz
-    " * https://www.clojure.cz
-    %s/(\(https\?:\)\?\/\/\(w\{3}\.\)\?clojure\.cz\(\/.\{-}\)\.html)/(\3\/)/cg
 endfunction
+
+" }}}
+
 
 " this has to be loaded after plugins, and it is
 " also called here so its settings are persistent after
 " re-sourcing this file i.e `:so %`
 call Colors()
+
+" vim:fdm=marker
