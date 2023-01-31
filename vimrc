@@ -823,14 +823,7 @@ nnoremap <bs> <C-^>
 let g:startify_change_to_vcs_root = 1
 let g:startify_change_cmd = 'lcd'
 let g:startify_fortune_use_unicode = 1
-" custom commands
-"   let g:startify_commands = [
-"   "\ {'s': ['VimWiki', '<leader>w']},
-"   "\ {'#': ['Bookmarks', 'Fern bookmark:///']},
-"   "\ {'c': ['Cheatsheet', 'CS']},
-"   "\ ]
-""\ ':help reference',
-""\ {'h': 'h ref'},
+
 " custom ascii art start screen
 let g:ascii = [
             \" _____                              _      __      ___",
@@ -1061,7 +1054,7 @@ let g:vimwiki_key_mappings = { 'headers': 0,
       \ 'table_mappings': 0,
       \ 'global': 0}
 
-nnoremap <leader>w :VimwikiTabIndex<CR>:tcd %:p:h<CR>:TabooRename Vimwiki Notes<CR>:tabm 0<CR>
+nnoremap <leader>w :VimwikiTabIndex<CR>:tcd %:p:h<CR>:tabm 0<CR>:LualineRenameTab VimWiki<CR>
 
 let g:vimwiki_folding = 'custom'
 
