@@ -10,6 +10,9 @@ sudo apt install gnupg2
 # needed for fern to delete to trash
 sudo apt install trash-cli
 
+# finder for telescope
+sudo apt install fd-find
+
 # very fast searching for FZF to use
 sudo apt install ripgrep
 
@@ -28,6 +31,13 @@ sudo npm -g i intelephense
 # pandoc to convert markdown to pdf
 sudo apt install pandoc
 sudo apt install texlive-xetex
+
+# install go
+sudo apt install golang
+
+# install nodejs 14
+curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+sudo apt install nodejs
 
 # set FZF to use ripgrep
 # -m allows selectioon of multiple files
