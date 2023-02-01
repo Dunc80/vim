@@ -15,21 +15,6 @@
 " navigate this file with folding
 " `zM` to close all folds by one level
 " `za` toggle current fold
-"
-" TODO: tidy all code
-"   remove code that is commented out
-"   make sections tidier
-"   remove unused code
-"   remove code that is not needed
-" TODO: git commit
-"   stage all changes
-"   commit
-" TODO: merge to master branch
-"   start release branch
-"   finish release branch
-"   push
-"   pull to vps
-"   pull to pi
 
 " Vim-Plug {{{
 " Install vim-plug if it isn't already
